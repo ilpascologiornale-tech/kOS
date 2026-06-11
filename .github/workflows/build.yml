@@ -15,3 +15,7 @@ jobs:
       - run: npm run build -- -p always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kOS-XP-Setup
+          path: dist/*.exe
