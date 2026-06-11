@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>kOS XP Professional</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230054e3'/><path fill='white' d='M8 8l4 4v8l-4 4zM16 8h8v4h-8zM16 16h8v4h-8zM16 24h8v4h-8z'/></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;user-select:none}
+body{
+  font-family:Tahoma,sans-serif;font-size:11px;overflow:hidden;height:100vh;
+  background:#316ac5 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%2387ceeb"/><stop offset="100%" stop-color="%235e9dd7"/></linearGradient></defs><rect width="800" height="600" fill="url(%23sky)"/><ellipse cx="600" cy="500" rx="300" ry="150" fill="%2373b55a"/><ellipse cx="200" cy="520" rx="250" ry="120" fill="%2368a84d"/></svg>') center/cover;
+}
+.desktop{position:absolute;inset:0 0 30px 0;padding:8px}
+.icon{width:74px;text-align:center;color:white;text-shadow:1px 1px 2px #000;padding:4px;margin:4px;border:1px solid transparent;border-radius:3px;position:absolute;cursor:default}
+.icon:hover{background:rgba(49,106,197,0.4);border-color:rgba(255,255,255,0.5)}
+.icon.selected{background:rgba(49,106,197,0.6);border:1px dotted #fff}
+.icon img{width:32px;height:32px;margin:0 auto 3px;display:block;pointer-events:none}
+.icon span{display:block;line-height:1.2;word-wrap:break-word;pointer-events:none}
+.window{position:absolute;background:#ece9d8;border:1px solid #0054e3;border-radius:8px 8px 0 0;box-shadow:2px 2px 8px rgba(0,0,0,0.5);min-width:300px;min-height:200px;display:none;flex-direction:column}
+.titlebar{background:linear-gradient(to bottom,#0058e6,#3d95ff 3%,#0058e6 6%,#0054e3);color:white;padding:3px 4px;font-weight:bold;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center;cursor:move;height:26px}
+.titlebar.title{display:flex;align-items:center;gap:5px}
+.titlebar.title img{width:16px;height:16px}
+.buttons{display:flex;gap:2px}
+.btn-win{width:21px;height:21px;border:1px solid #fff;border-radius:3px;background:linear-gradient(to bottom,#f1a100,#d48100);cursor:pointer;font-family:'Webdings';font-size:10px;color:white;line-height:19px;text-align:center;box-shadow:inset -1px -1px 0 rgba(0,0,0,0.2)}
+.btn-win:hover{filter:brightness(1.15)}
+.btn-win.close{background:linear-gradient(to bottom,#e55454,#c10000)}
+.btn-win:active{box-shadow:inset 1px 1px 2px rgba(0,0,0,0.4)}
+.content{flex:1;background:white;overflow:auto;border:2px solid #ece9d8;border-top:none}
+.menubar{background:#ece9d8;border-bottom:1px solid #aca899;padding:2px;display:flex;gap:2px}
+.menubar span{padding:3px 8px;cursor:default}
+.menubar span:hover{background:#316ac5;color:white}
+.toolbar{background:#ece9d8;border-bottom:1px solid #aca899;padding:3px;display:flex;gap:3px;align-items:center}
+.toolbar button{padding:3px 8px;border:1px solid #ece9d8;background:transparent;cursor:pointer;font-size:11px}
+.toolbar button:hover{border:1px solid #316ac5;background:linear-gradient(to bottom,#fff,#e5e5e5)}
+.taskbar{position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(to bottom,#245edb,#1941a5 3%,#1941a5 97%,#0c2a6b);border-top:1px solid #4993e6;display:flex;align-items:center;z-index:10000}
+.start{height:100%;padding:0 20px 0 10px;background:linear-gradient(to bottom,#3c9e3c,#1f5f1f 3%,#1f5f1f 97%,#0e3a0e);color:white;font-weight:bold;font-style:italic;border-radius:0 8px 8px 0;display:flex;align-items:center;gap:6px;cursor:pointer;margin-right:6px;box-shadow:inset -1px -1px 0 rgba(0,0,0,0.3)}
+.start:hover{filter:brightness(1.2)}
+.start:active{box-shadow:inset 1px 1px 2px rgba(0,0,0,0.5)}
+.taskbar-items{flex:1;display:flex;gap:2px;height:22px}
+.task-item{background:linear-gradient(to bottom,#5e9dd7,#316ac5 3%,#316ac5 97%,#1e4a8a);color:white;padding:0 10px;border:1px solid #1e4a8a;border-radius:2px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px}
+.task-item:hover{filter:brightness(1.1)}
+.task-item.active{background:linear-gradient(to bottom,#316ac5,#5e9dd7 3%,#5e9dd7 97%,#316ac5);box-shadow:inset 1px 1px 2px rgba(0,0,0,0.3)}
+.task-item img{width:16px;height:16px}
+.tray{background:linear-gradient(to bottom,#1e4a8a,#1941a5);color:white;padding:0 10px;height:22px;display:flex;align-items:center;border-left:1px solid #0c2a6b;font-size:11px}
+.menu{position:absolute;bottom:30px;left:0;width:250px;background:#d6dff7;border:2px solid #0a246a;border-bottom:none;display:none;z-index:9999;box-shadow:2px -2px 5px rgba(0,0,0,0.3)}
+.menu-header{background:linear-gradient(to right,#0054e3,#3d95ff);color:white;padding:8px;display:flex;align-items:center;gap:8px;font-weight:bold}
+.menu-header img{width:32px;height:32px;background:white;border-radius:3px;padding:2px}
+.menu-item{padding:4px 8px 4px 32px;cursor:default;display:flex;align-items:center;gap:8px;position:relative}
+.menu-item:hover{background:#316ac5;color:white}
+.menu-item img{width:16px;height:16px;position:absolute;left:8px}
+.menu-sep{border-top:1px solid #aca899;margin:3px 8px}
+textarea,input{width:100%;height:100%;border:1px solid #7f9db9;font-family:'Courier New';font-size:12px;resize:none;outline:none;user-select:text;padding:4px}
+.ie-bar{display:flex;gap:4px;padding:4px;background:#ece9d8;border-bottom:1px solid #aca899;align-items:center}
+.ie-bar input{flex:1;padding:3px;border:1px solid #7f9db9;font-family:Tahoma}
+.ie-bar button{padding:3px 12px;background:linear-gradient(to bottom,#fff,#e5e5e5);border:1px solid #aca899;cursor:pointer;font-size:11px}
+.ie-bar button:active{background:#e5e5e5}
+.ie-bar button:disabled{opacity:0.5;cursor:not-allowed}
+iframe{width:100%;height:calc(100% - 33px);border:none;background:white}
+canvas{background:white;cursor:crosshair;display:block}
+.paint-tools{background:#ece9d8;padding:4px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #aca899}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;padding:12px}
+.grid-item{padding:8px;border:1px solid transparent;text-align:center;cursor:default}
+.grid-item:hover{background:rgba(49,106,197,0.1);border-color:#316ac5}
+.grid-item img{width:48px;height:48px;margin:0 auto 4px}
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:4px;background:#ece9d8}
+.calc button{padding:12px;font-size:13px;border:1px solid #aca899;background:linear-gradient(to bottom,#fff,#e5e5e5);cursor:pointer}
+.calc button:active{background:#e5e5e5}
+.calc-display{grid-column:1/-1;text-align:right;padding:8px;font-size:18px;background:white;border:1px solid #7f9db9;margin-bottom:2px}
+.cmd{background:black;color:#c0c0c0;font-family:'Lucida Console';padding:4px;height:100%;overflow-y:auto;font-size:12px}
+.cmd input{background:black;color:#c0c0c0;border:none;font-family:'Lucida Console';width:90%;outline:none}
+.context-menu{position:absolute;background:#ece9d8;border:1px solid #0a246a;box-shadow:2px 2px 3px rgba(0,0,0,0.3);z-index:99999;min-width:150px}
+.context-item{padding:4px 20px;cursor:default}
+.context-item:hover{background:#316ac5;color:white}
+.context-sep{border-top:1px solid #aca899;margin:2px 0}
+</style>
+</head>
+<body>
+
+<div class="desktop" id="desktop">
+  <div class="icon" style="top:16px;left:16px" data-app="mycomputer" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='8' width='28' height='20' fill='%23d4d0c8' stroke='%23808080'/><rect x='4' y='10' width='24' height='14' fill='%23008080'/><rect x='6' y='26' width='20' height='2' fill='%23808080'/></svg>">
+    <span>Risorse del computer</span>
+  </div>
+  <div class="icon" style="top:100px;left:16px" data-app="control" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23c0c0c0' stroke='%23808080' stroke-width='2'/><circle cx='16' cy='16' r='5' fill='%23ff0000'/><rect x='14' y='2' width='4' height='4' fill='%23808080'/></svg>">
+    <span>Pannello di controllo</span>
+  </div>
+  <div class="icon" style="top:184px;left:16px" data-app="ie" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230054e3'/><path fill='white' d='M16 6c-2 0-4 1-5 3l3 2c1-1 1-2 2-2s2 1 2 2-1 2-2 3c-1 0-3 0-4 2v2h8v-2c0-1-1-1-2-2 2-1 3-3 3-5 0-3-2-5-5-5z'/></svg>">
+    <span>Internet Explorer</span>
+  </div>
+  <div class="icon" style="top:268px;left:16px" data-app="writer" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='2' width='24' height='28' fill='%232b579a'/><rect x='7' y='6' width='18' height='2' fill='white'/><rect x='7' y='10' width='18' height='2' fill='white'/><rect x='7' y='14' width='18' height='2' fill='white'/><rect x='7' y='18' width='12' height='2' fill='white'/></svg>">
+    <span>kOffice Writer</span>
+  </div>
+  <div class="icon" style="top:16px;left:100px" data-app="calc" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='4' width='24' height='24' fill='%23c0c0c0' stroke='%23808080'/><rect x='7' y='7' width='18' height='4' fill='%23008000'/><text x='16' y='26' text-anchor='middle' fill='black' font-size='14' font-family='Arial'>123</text></svg>">
+    <span>Calcolatrice</span>
+  </div>
+  <div class="icon" style="top:100px;left:100px" data-app="paint" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='4' width='24' height='24' fill='%23ff69b4'/><circle cx='16' cy='16' r='8' fill='%23ffff00'/><rect x='12' y='12' width='8' height='8' fill='%2300ff00'/></svg>">
+    <span>Paint</span>
+  </div>
+  <div class="icon" style="top:184px;left:100px" data-app="mediaplayer" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23ff8c00'/><polygon points='12,10 12,22 22,16' fill='white'/></svg>">
+    <span>Windows Media Player</span>
+  </div>
+  <div class="icon" style="top:268px;left:100px" data-app="cmd" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='4' width='28' height='24' fill='black'/><text x='6' y='16' fill='%23c0c0c0' font-size='10' font-family='monospace'>C:\></text><rect x='16' y='18' width='6' height='2' fill='%23c0c0c0'/></svg>">
+    <span>Prompt dei comandi</span>
+  </div>
+  <div class="icon" style="top:352px;left:16px" data-app="presenter" data-type="app">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='8' width='24' height='18' fill='%23d24726'/><circle cx='16' cy='17' r='5' fill='white'/></svg>">
+    <span>kOffice Presenter</span>
+  </div>
+  <div class="icon" style="top:352px;left:100px" data-app="recycle" data-type="app">
+    <img id="recycleIcon" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23808080' d='M12 6h8v2h-8zM10 8h12l-1 18H11z'/><rect x='14' y='12' width='2' height='10' fill='white'/><rect x='18' y='12' width='2' height='10' fill='white'/></svg>">
+    <span>Cestino</span>
+  </div>
+</div>
+
+<div class="taskbar">
+  <div class="start" onclick="toggleMenu()">
+    <svg width="20" height="16" viewBox="0 0 20 16"><path fill="white" d="M0 0h9v7H0zM11 0h9v7h-9zM0 9h9v7H0zM11 9h9v7h-9z"/></svg>
+    start
+  </div>
+  <div class="taskbar-items" id="taskbar"></div>
+  <div class="tray" id="clock"></div>
+</div>
+
+<div class="menu" id="startMenu">
+  <div class="menu-header">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='12' r='6' fill='%23c0c0c0'/><path fill='%23c0c0c0' d='M8 26c0-4 4-8 8-8s8 4 8 8'/></svg>">
+    <div>Administrator</div>
+  </div>
+  <div style="display:flex">
+    <div style="flex:1;background:white;color:black;padding:4px 0">
+      <div class="menu-item" onclick="openApp('ie')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%230054e3'/></svg>">Internet<br>Internet Explorer</div>
+      <div class="menu-item" onclick="openApp('writer')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232b579a'/></svg>">kOffice Writer</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="openApp('paint')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23ff69b4'/></svg>">Paint</div>
+      <div class="menu-item" onclick="openApp('calc')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23c0c0c0'/></svg>">Calcolatrice</div>
+      <div class="menu-item" onclick="openApp('mediaplayer')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23ff8c00'/></svg>">Windows Media Player</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="openApp('control')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%23c0c0c0'/></svg>">Pannello di controllo</div>
+      <div class="menu-item" onclick="openApp('cmd')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='black'/></svg>">Prompt dei comandi</div>
+    </div>
+  <div style="background:#d6dff7;border-top:1px solid #aca899;padding:4px;display:flex;justify-content:flex-end;gap:8px">
+    <div class="menu-item" style="padding:4px 12px" onclick="alert('Disconnessione...');location.reload()">Disconnetti</div>
+    <div class="menu-item" style="padding:4px 12px" onclick="if(confirm('Spegnere kOS?'))window.close()">Spegni</div>
+  </div>
+</div>
+
+<script>
+const fs = JSON.parse(localStorage.getItem('kOS_XP_fs') || '{"C:":{"Documents":{},"Pictures":{},"Desktop":{},"Windows":{"System32":{}}}}');
+const users = JSON.parse(localStorage.getItem('kOS_users') || '["Administrator"]');
+const settings = JSON.parse(localStorage.getItem('kOS_settings') || '{"bg":"bliss","theme":"xp"}');
+const recycle = JSON.parse(localStorage.getItem('kOS_recycle') || '[]');
+const windows = {};
+let zIndex = 100, activeWin = null, selectedIcon = null;
+const historyStack = { ie: [] };
+let historyIndex = { ie: -1 };
+
+function save() {
+  localStorage.setItem('kOS_XP_fs', JSON.stringify(fs));
+  localStorage.setItem('kOS_users', JSON.stringify(users));
+  localStorage.setItem('kOS_settings', JSON.stringify(settings));
+  localStorage.setItem('kOS_recycle', JSON.stringify(recycle));
+}
+
+function createWindow(id, title, content, w=600, h=450) {
+  if(windows[id]) { focusWindow(id); return windows[id]; }
+  const win = document.createElement('div');
+  win.className = 'window';
+  win.style.width = w+'px'; win.style.height = h+'px';
+  win.style.left = (60+Object.keys(windows).length*25)+'px';
+  win.style.top = (60+Object.keys(windows).length*25)+'px';
+  const iconSvg = document.querySelector(`[data-app="${id}"] img`)?.src || '';
+  win.innerHTML = `<div class="titlebar" onmousedown="dragStart(event,'${id}')"><div class="title"><img src="${iconSvg}"><span>${title}</span></div><div class="buttons"><div class="btn-win" onclick="minimize('${id}')">0</div><div class="btn-win" onclick="maximize('${id}')">1</div><div class="btn-win close" onclick="closeWindow('${id}')">r</div></div></div>${content}`;
+  document.body.appendChild(win);
+  win.style.display = 'flex';
+  windows[id] = win;
+  addTaskbarItem(id, title, iconSvg);
+  focusWindow(id);
+  return win;
+}
+
+function focusWindow(id) {
+  zIndex++; windows[id].style.zIndex = zIndex; activeWin = id;
+  document.querySelectorAll('.task-item').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-win="${id}"]`)?.classList.add('active');
+}
+function closeWindow(id) { windows[id].remove(); delete windows[id]; document.querySelector(`[data-win="${id}"]`)?.remove(); }
+function minimize(id) { windows[id].style.display = 'none'; }
+function maximize(id) {
+  const w = windows[id];
+  if(w.dataset.max === '1') { w.style.width = w.dataset.w; w.style.height = w.dataset.h; w.style.left = w.dataset.l; w.style.top = w.dataset.t; w.dataset.max = '0'; }
+  else { w.dataset.w = w.style.width; w.dataset.h = w.style.height; w.dataset.l = w.style.left; w.dataset.t = w.style.top; w.style.width = '100%'; w.style.height = 'calc(100% - 30px)'; w.style.left = '0'; w.style.top = '0'; w.dataset.max = '1'; }
+}
+function addTaskbarItem(id, title, icon) {
+  const item = document.createElement('div');
+  item.className = 'task-item'; item.dataset.win = id;
+  item.innerHTML = `<img src="${icon}"><span>${title}</span>`;
+  item.onclick = () => { if(windows[id].style.display === 'none') { windows[id].style.display = 'flex'; focusWindow(id); } else if(activeWin === id) minimize(id); else focusWindow(id); };
+  document.getElementById('taskbar').appendChild(item);
+}
+
+let dragWin = null, offsetX, offsetY;
+function dragStart(e, id) { if(e.target.classList.contains('btn-win')) return; dragWin = windows[id]; focusWindow(id); offsetX = e.clientX - dragWin.offsetLeft; offsetY = e.clientY - dragWin.offsetTop; }
+document.onmousemove = e => { if(dragWin &&!dragWin.dataset.max) { dragWin.style.left = (e.clientX - offsetX) + 'px'; dragWin.style.top = (e.clientY - offsetY) + 'px'; } };
+document.onmouseup = () => dragWin = null;
+
+function openApp(app) {
+  document.getElementById('startMenu').style.display = 'none';
+  const apps = {
+    mycomputer: () => createWindow('mycomputer', 'Risorse del computer', `<div class="menubar"><span>File</span><span>Modifica</span><span>Visualizza</span><span>Preferiti</span><span>Strumenti</span></div><div class="content"><div class="grid">${Object.keys(fs['C:']).map(f=>`<div class="grid-item" ondblclick="openFolder('C:/${f}')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><path fill='%23ffd04c' d='M6 14h36v24H6z'/><path fill='%23ff9f0e' d='M6 14h36v6H6z'/></svg>"><div>${f}</div></div>`).join('')}</div></div>`, 700, 500),
+    control: () => createWindow('control', 'Pannello di controllo', `<div class="content"><div class="grid">
+      <div class="grid-item" onclick="openControlPage('display')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='4' y='8' width='40' height='28' fill='%23c0c0c0' stroke='%23808080'/><rect x='8' y='12' width='32' height='20' fill='%23008080'/></svg>"><div>Schermo</div></div>
+      <div class="grid-item" onclick="openControlPage('system')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='8' y='6' width='32' height='36' fill='%23d4d0c8'/><rect x='12' y='10' width='24' height='16' fill='%23008080'/></svg>"><div>Sistema</div></div>
+      <div class="grid-item" onclick="openControlPage('users')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='18' r='8' fill='%23c0c0c0'/><path fill='%23c0c0c0' d='M12 38c0-6 5-10 12-10s12 4 12 10'/></svg>"><div>Account utente</div></div>
+      <div class="grid-item" onclick="openControlPage('datetime')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='18' fill='white' stroke='%23808080' stroke-width='2'/><path stroke='black' d='M24 24l0 -8M24 24l6 0'/></svg>"><div>Data e ora</div></div>
+    </div></div>`, 600, 400),
+    ie: () => {
+      createWindow('ie', 'kOS Internet Explorer', `<div class="menubar"><span>File</span><span>Modifica</span><span>Visualizza</span><span>Preferiti</span><span>Strumenti</span></div>
+      <div class="ie-bar">
+        <button onclick="ieBack()" id="ieBackBtn" title="Indietro" disabled>←</button>
+        <button onclick="ieForward()" id="ieForwardBtn" title="Avanti" disabled>→</button>
+        <button onclick="go('kos://welcome','ie')" title="Home">🏠</button>
+        <input id="url-ie" value="kos://welcome" onkeydown="if(event.key==='Enter')go(this.value,'ie')" placeholder="Digita indirizzo web o kos://">
+        <button onclick="go(document.getElementById('url-ie').value,'ie')">Vai</button>
+      </div>
+      <iframe id="frame-ie" srcdoc="<div style='padding:20px;font-family:Tahoma'><h2>kOS Internet Explorer</h2><p>Benvenuto!</p><p><b>Pagine kOS private:</b></p><ul><li><a href='kos://settings'>kos://settings</a> - Impostazioni</li><li><a href='kos://system'>kos://system</a> - Sistema</li><li><a href='kos://admin'>kos://admin</a> - Amministrazione</li><li><a href='kos://update'>kos://update</a> - Aggiornamenti</li></ul><p><b>Oppure naviga sul web:</b> prova con example.com, wikipedia.org</p></div>"></iframe>`, 900, 600);
+      historyStack.ie = ['kos://welcome'];
+      historyIndex.ie = 0;
+    },
+    writer: () => createWindow('writer', 'kOffice Writer - Documento1', `<div class="menubar"><span onclick="fileMenu('writer')">File</span><span>Modifica</span><span>Visualizza</span><span>Inserisci</span><span>Formato</span></div><div class="toolbar"><button onclick="saveDoc()"><b>B</b> Salva</button><button onclick="newDoc()">Nuovo</button><button onclick="openDoc()">Apri</button></div><div class="content"><textarea id="doc" placeholder="Inizia a scrivere..."></textarea></div>`, 800, 600),
+    calc: () => { createWindow('calc', 'Calcolatrice', `<div class="menubar"><span>Visualizza</span><span>Modifica</span></div><div class="content"><div class="calc"><input class="calc-display" id="calcDisplay" value="0" readonly><button onclick="calcClear()">C</button><button onclick="calcOp('/')">/</button><button onclick="calcOp('*')">*</button><button onclick="calcOp('-')">-</button><button onclick="calcNum(7)">7</button><button onclick="calcNum(8)">8</button><button onclick="calcNum(9)">9</button><button onclick="calcOp('+')" style="grid-row:span 2">+</button><button onclick="calcNum(4)">4</button><button onclick="calcNum(5)">5</button><button onclick="calcNum(6)">6</button><button onclick="calcNum(1)">1</button><button onclick="calcNum(2)">2</button><button onclick="calcNum(3)">3</button><button onclick="calcEq()" style="grid-row:span 2">=</button><button onclick="calcNum(0)" style="grid-column:span 2">0</button><button onclick="calcNum('.')">.</button></div></div>`, 260, 320); },
+    paint: () => { createWindow('paint', 'Paint - Senza titolo', `<div class="menubar"><span onclick="fileMenu('paint')">File</span><span>Modifica</span><span>Visualizza</span><span>Immagine</span></div><div class="paint-tools">Colore: <input type="color" id="paintColor" value="#000000">Spessore: <input type="range" id="paintSize" min="1" max="20" value="3"><button onclick="clearPaint()">Cancella</button></div><div class="content"><canvas id="canvas" width="1200" height="800"></canvas></div>`, 1000, 700); initPaint(); },
+    mediaplayer: () => createWindow('mediaplayer', 'Windows Media Player', `<div class="menubar"><span onclick="document.getElementById('mediaFile').click()">File</span><span>Visualizza</span><span>Riproduci</span></div><div class="content" style="background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column"><input type="file" id="mediaFile" accept="audio/*,video/*" style="display:none" onchange="playMedia(this)"><video id="player" controls style
