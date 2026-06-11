@@ -1,7 +1,6 @@
 {
   "name": "kos-xp",
   "version": "1.0.0",
-  "description": "kOS XP Desktop",
   "main": "main.js",
   "scripts": {
     "build": "electron-builder"
@@ -14,12 +13,7 @@
     "appId": "com.kos.xp",
     "productName": "kOS XP",
     "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "target": "nsis"
     }
   }
 }
