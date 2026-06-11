@@ -1,0 +1,20 @@
+{
+  "name": "kos-xp",
+  "version": "1.0.0",
+  "description": "kOS XP Professional con auto-update",
+  "main": "main.js",
+  "author": "Ilpascologiornale-tech",
+  "scripts": { "build": "electron-builder" },
+  "devDependencies": { 
+    "electron": "28.3.3", 
+    "electron-builder": "24.13.3",
+    "electron-updater": "6.1.8"
+  },
+  "build": {
+    "appId": "com.ilpascologiornale.kosxp",
+    "productName": "kOS XP Professional",
+    "win": { "target": "nsis", "icon": "icon.ico" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true },
+    "publish": { "provider": "github", "owner": "Ilpascologiornale-tech", "repo": "kOS-XP" }
+  }
+}
