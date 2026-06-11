@@ -1,6 +1,5 @@
 const { app, BrowserWindow, autoUpdater } = require('electron');
 const path = require('path');
-if (require('electron-squirrel-startup')) app.quit();
 autoUpdater.setFeedURL('https://github.com/Ilpascologiornale-tech/kOS-XP/releases/latest');
 function createWindow() {
   const win = new BrowserWindow({
