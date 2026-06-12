@@ -1,239 +1,1706 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>kOS XP Professional</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230054e3'/><path fill='white' d='M8 8l4 4v8l-4 4zM16 8h8v4h-8zM16 16h8v4h-8zM16 24h8v4h-8z'/></svg>">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;user-select:none}
-body{
-  font-family:Tahoma,sans-serif;font-size:11px;overflow:hidden;height:100vh;
-  background:#316ac5 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%2387ceeb"/><stop offset="100%" stop-color="%235e9dd7"/></linearGradient></defs><rect width="800" height="600" fill="url(%23sky)"/><ellipse cx="600" cy="500" rx="300" ry="150" fill="%2373b55a"/><ellipse cx="200" cy="520" rx="250" ry="120" fill="%2368a84d"/></svg>') center/cover;
-}
-.desktop{position:absolute;inset:0 0 30px 0;padding:8px}
-.icon{width:74px;text-align:center;color:white;text-shadow:1px 1px 2px #000;padding:4px;margin:4px;border:1px solid transparent;border-radius:3px;position:absolute;cursor:default}
-.icon:hover{background:rgba(49,106,197,0.4);border-color:rgba(255,255,255,0.5)}
-.icon.selected{background:rgba(49,106,197,0.6);border:1px dotted #fff}
-.icon img{width:32px;height:32px;margin:0 auto 3px;display:block;pointer-events:none}
-.icon span{display:block;line-height:1.2;word-wrap:break-word;pointer-events:none}
-.window{position:absolute;background:#ece9d8;border:1px solid #0054e3;border-radius:8px 8px 0 0;box-shadow:2px 2px 8px rgba(0,0,0,0.5);min-width:300px;min-height:200px;display:none;flex-direction:column}
-.titlebar{background:linear-gradient(to bottom,#0058e6,#3d95ff 3%,#0058e6 6%,#0054e3);color:white;padding:3px 4px;font-weight:bold;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center;cursor:move;height:26px}
-.titlebar.title{display:flex;align-items:center;gap:5px}
-.titlebar.title img{width:16px;height:16px}
-.buttons{display:flex;gap:2px}
-.btn-win{width:21px;height:21px;border:1px solid #fff;border-radius:3px;background:linear-gradient(to bottom,#f1a100,#d48100);cursor:pointer;font-family:'Webdings';font-size:10px;color:white;line-height:19px;text-align:center;box-shadow:inset -1px -1px 0 rgba(0,0,0,0.2)}
-.btn-win:hover{filter:brightness(1.15)}
-.btn-win.close{background:linear-gradient(to bottom,#e55454,#c10000)}
-.btn-win:active{box-shadow:inset 1px 1px 2px rgba(0,0,0,0.4)}
-.content{flex:1;background:white;overflow:auto;border:2px solid #ece9d8;border-top:none}
-.menubar{background:#ece9d8;border-bottom:1px solid #aca899;padding:2px;display:flex;gap:2px}
-.menubar span{padding:3px 8px;cursor:default}
-.menubar span:hover{background:#316ac5;color:white}
-.toolbar{background:#ece9d8;border-bottom:1px solid #aca899;padding:3px;display:flex;gap:3px;align-items:center}
-.toolbar button{padding:3px 8px;border:1px solid #ece9d8;background:transparent;cursor:pointer;font-size:11px}
-.toolbar button:hover{border:1px solid #316ac5;background:linear-gradient(to bottom,#fff,#e5e5e5)}
-.taskbar{position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(to bottom,#245edb,#1941a5 3%,#1941a5 97%,#0c2a6b);border-top:1px solid #4993e6;display:flex;align-items:center;z-index:10000}
-.start{height:100%;padding:0 20px 0 10px;background:linear-gradient(to bottom,#3c9e3c,#1f5f1f 3%,#1f5f1f 97%,#0e3a0e);color:white;font-weight:bold;font-style:italic;border-radius:0 8px 8px 0;display:flex;align-items:center;gap:6px;cursor:pointer;margin-right:6px;box-shadow:inset -1px -1px 0 rgba(0,0,0,0.3)}
-.start:hover{filter:brightness(1.2)}
-.start:active{box-shadow:inset 1px 1px 2px rgba(0,0,0,0.5)}
-.taskbar-items{flex:1;display:flex;gap:2px;height:22px}
-.task-item{background:linear-gradient(to bottom,#5e9dd7,#316ac5 3%,#316ac5 97%,#1e4a8a);color:white;padding:0 10px;border:1px solid #1e4a8a;border-radius:2px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px}
-.task-item:hover{filter:brightness(1.1)}
-.task-item.active{background:linear-gradient(to bottom,#316ac5,#5e9dd7 3%,#5e9dd7 97%,#316ac5);box-shadow:inset 1px 1px 2px rgba(0,0,0,0.3)}
-.task-item img{width:16px;height:16px}
-.tray{background:linear-gradient(to bottom,#1e4a8a,#1941a5);color:white;padding:0 10px;height:22px;display:flex;align-items:center;border-left:1px solid #0c2a6b;font-size:11px}
-.menu{position:absolute;bottom:30px;left:0;width:250px;background:#d6dff7;border:2px solid #0a246a;border-bottom:none;display:none;z-index:9999;box-shadow:2px -2px 5px rgba(0,0,0,0.3)}
-.menu-header{background:linear-gradient(to right,#0054e3,#3d95ff);color:white;padding:8px;display:flex;align-items:center;gap:8px;font-weight:bold}
-.menu-header img{width:32px;height:32px;background:white;border-radius:3px;padding:2px}
-.menu-item{padding:4px 8px 4px 32px;cursor:default;display:flex;align-items:center;gap:8px;position:relative}
-.menu-item:hover{background:#316ac5;color:white}
-.menu-item img{width:16px;height:16px;position:absolute;left:8px}
-.menu-sep{border-top:1px solid #aca899;margin:3px 8px}
-textarea,input{width:100%;height:100%;border:1px solid #7f9db9;font-family:'Courier New';font-size:12px;resize:none;outline:none;user-select:text;padding:4px}
-.ie-bar{display:flex;gap:4px;padding:4px;background:#ece9d8;border-bottom:1px solid #aca899;align-items:center}
-.ie-bar input{flex:1;padding:3px;border:1px solid #7f9db9;font-family:Tahoma}
-.ie-bar button{padding:3px 12px;background:linear-gradient(to bottom,#fff,#e5e5e5);border:1px solid #aca899;cursor:pointer;font-size:11px}
-.ie-bar button:active{background:#e5e5e5}
-.ie-bar button:disabled{opacity:0.5;cursor:not-allowed}
-iframe{width:100%;height:calc(100% - 33px);border:none;background:white}
-canvas{background:white;cursor:crosshair;display:block}
-.paint-tools{background:#ece9d8;padding:4px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #aca899}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;padding:12px}
-.grid-item{padding:8px;border:1px solid transparent;text-align:center;cursor:default}
-.grid-item:hover{background:rgba(49,106,197,0.1);border-color:#316ac5}
-.grid-item img{width:48px;height:48px;margin:0 auto 4px}
-.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:4px;background:#ece9d8}
-.calc button{padding:12px;font-size:13px;border:1px solid #aca899;background:linear-gradient(to bottom,#fff,#e5e5e5);cursor:pointer}
-.calc button:active{background:#e5e5e5}
-.calc-display{grid-column:1/-1;text-align:right;padding:8px;font-size:18px;background:white;border:1px solid #7f9db9;margin-bottom:2px}
-.cmd{background:black;color:#c0c0c0;font-family:'Lucida Console';padding:4px;height:100%;overflow-y:auto;font-size:12px}
-.cmd input{background:black;color:#c0c0c0;border:none;font-family:'Lucida Console';width:90%;outline:none}
-.context-menu{position:absolute;background:#ece9d8;border:1px solid #0a246a;box-shadow:2px 2px 3px rgba(0,0,0,0.3);z-index:99999;min-width:150px}
-.context-item{padding:4px 20px;cursor:default}
-.context-item:hover{background:#316ac5;color:white}
-.context-sep{border-top:1px solid #aca899;margin:2px 0}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kOS - Retro Operating System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (MS Sans Serif style fallback) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs per la collaborazione in tempo reale -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
+
+    <style>
+        body {
+            font-family: 'Tahoma', 'Segoe UI', Geneva, Verdana, sans-serif;
+            user-select: none;
+            overflow: hidden;
+        }
+        .retro-bevel {
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #707070;
+            border-bottom: 2px solid #707070;
+        }
+        .retro-bevel-inset {
+            border-top: 2px solid #707070;
+            border-left: 2px solid #707070;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+        }
+        .xp-blue-gradient {
+            background: linear-gradient(to bottom, #0058e4 0%, #003db8 100%);
+        }
+        .xp-taskbar-gradient {
+            background: linear-gradient(to bottom, #1e5799 0%, #2989d8 15%, #207cca 49%, #1c5fa3 51%, #3c93df 100%);
+        }
+        .xp-start-gradient {
+            background: linear-gradient(to bottom, #388a0e 0%, #4ca715 48%, #3c930e 52%, #1e5307 100%);
+        }
+        .xp-window-header {
+            background: linear-gradient(to right, #0058e4 0%, #3a85ff 100%);
+        }
+        /* Stile di scorrimento retrò */
+        ::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d0c8;
+            border: 2px solid #f1f1f1;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+        }
+    </style>
 </head>
-<body>
+<body class="w-screen h-screen relative bg-emerald-800 flex flex-col justify-between" id="desktop-root">
 
-<div class="desktop" id="desktop">
-  <div class="icon" style="top:16px;left:16px" data-app="mycomputer" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='8' width='28' height='20' fill='%23d4d0c8' stroke='%23808080'/><rect x='4' y='10' width='24' height='14' fill='%23008080'/><rect x='6' y='26' width='20' height='2' fill='%23808080'/></svg>">
-    <span>Risorse del computer</span>
-  </div>
-  <div class="icon" style="top:100px;left:16px" data-app="control" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23c0c0c0' stroke='%23808080' stroke-width='2'/><circle cx='16' cy='16' r='5' fill='%23ff0000'/><rect x='14' y='2' width='4' height='4' fill='%23808080'/></svg>">
-    <span>Pannello di controllo</span>
-  </div>
-  <div class="icon" style="top:184px;left:16px" data-app="ie" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230054e3'/><path fill='white' d='M16 6c-2 0-4 1-5 3l3 2c1-1 1-2 2-2s2 1 2 2-1 2-2 3c-1 0-3 0-4 2v2h8v-2c0-1-1-1-2-2 2-1 3-3 3-5 0-3-2-5-5-5z'/></svg>">
-    <span>Internet Explorer</span>
-  </div>
-  <div class="icon" style="top:268px;left:16px" data-app="writer" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='2' width='24' height='28' fill='%232b579a'/><rect x='7' y='6' width='18' height='2' fill='white'/><rect x='7' y='10' width='18' height='2' fill='white'/><rect x='7' y='14' width='18' height='2' fill='white'/><rect x='7' y='18' width='12' height='2' fill='white'/></svg>">
-    <span>kOffice Writer</span>
-  </div>
-  <div class="icon" style="top:16px;left:100px" data-app="calc" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='4' width='24' height='24' fill='%23c0c0c0' stroke='%23808080'/><rect x='7' y='7' width='18' height='4' fill='%23008000'/><text x='16' y='26' text-anchor='middle' fill='black' font-size='14' font-family='Arial'>123</text></svg>">
-    <span>Calcolatrice</span>
-  </div>
-  <div class="icon" style="top:100px;left:100px" data-app="paint" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='4' width='24' height='24' fill='%23ff69b4'/><circle cx='16' cy='16' r='8' fill='%23ffff00'/><rect x='12' y='12' width='8' height='8' fill='%2300ff00'/></svg>">
-    <span>Paint</span>
-  </div>
-  <div class="icon" style="top:184px;left:100px" data-app="mediaplayer" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23ff8c00'/><polygon points='12,10 12,22 22,16' fill='white'/></svg>">
-    <span>Windows Media Player</span>
-  </div>
-  <div class="icon" style="top:268px;left:100px" data-app="cmd" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='4' width='28' height='24' fill='black'/><text x='6' y='16' fill='%23c0c0c0' font-size='10' font-family='monospace'>C:\></text><rect x='16' y='18' width='6' height='2' fill='%23c0c0c0'/></svg>">
-    <span>Prompt dei comandi</span>
-  </div>
-  <div class="icon" style="top:352px;left:16px" data-app="presenter" data-type="app">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='8' width='24' height='18' fill='%23d24726'/><circle cx='16' cy='17' r='5' fill='white'/></svg>">
-    <span>kOffice Presenter</span>
-  </div>
-  <div class="icon" style="top:352px;left:100px" data-app="recycle" data-type="app">
-    <img id="recycleIcon" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23808080' d='M12 6h8v2h-8zM10 8h12l-1 18H11z'/><rect x='14' y='12' width='2' height='10' fill='white'/><rect x='18' y='12' width='2' height='10' fill='white'/></svg>">
-    <span>Cestino</span>
-  </div>
-</div>
-
-<div class="taskbar">
-  <div class="start" onclick="toggleMenu()">
-    <svg width="20" height="16" viewBox="0 0 20 16"><path fill="white" d="M0 0h9v7H0zM11 0h9v7h-9zM0 9h9v7H0zM11 9h9v7h-9z"/></svg>
-    start
-  </div>
-  <div class="taskbar-items" id="taskbar"></div>
-  <div class="tray" id="clock"></div>
-</div>
-
-<div class="menu" id="startMenu">
-  <div class="menu-header">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='12' r='6' fill='%23c0c0c0'/><path fill='%23c0c0c0' d='M8 26c0-4 4-8 8-8s8 4 8 8'/></svg>">
-    <div>Administrator</div>
-  </div>
-  <div style="display:flex">
-    <div style="flex:1;background:white;color:black;padding:4px 0">
-      <div class="menu-item" onclick="openApp('ie')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%230054e3'/></svg>">Internet<br>Internet Explorer</div>
-      <div class="menu-item" onclick="openApp('writer')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232b579a'/></svg>">kOffice Writer</div>
-      <div class="menu-sep"></div>
-      <div class="menu-item" onclick="openApp('paint')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23ff69b4'/></svg>">Paint</div>
-      <div class="menu-item" onclick="openApp('calc')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23c0c0c0'/></svg>">Calcolatrice</div>
-      <div class="menu-item" onclick="openApp('mediaplayer')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23ff8c00'/></svg>">Windows Media Player</div>
-      <div class="menu-sep"></div>
-      <div class="menu-item" onclick="openApp('control')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%23c0c0c0'/></svg>">Pannello di controllo</div>
-      <div class="menu-item" onclick="openApp('cmd')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='black'/></svg>">Prompt dei comandi</div>
+    <!-- SFONDO DESKTOP STILE "BLISS" (Colline Verdi e Cielo Azzurro in CSS Puro + Nuvole per massima fedeltà offline) -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" id="bliss-wallpaper">
+        <div class="w-full h-full" style="background: linear-gradient(to bottom, #3a85ff 0%, #85b3ff 60%, #46962b 61%, #246e13 100%); transition: background 0.3s ease;">
+            <!-- Sole -->
+            <div class="absolute top-12 right-24 w-24 h-24 rounded-full bg-yellow-200 blur-md opacity-60"></div>
+            <!-- Nuvole SVG fittizie -->
+            <svg class="absolute top-8 left-16 opacity-30" width="120" height="40" viewBox="0 0 120 40">
+                <path d="M10 30 Q 20 10, 40 25 Q 50 10, 70 25 Q 90 10, 110 30 Z" fill="#ffffff" />
+            </svg>
+            <svg class="absolute top-24 right-1/4 opacity-20" width="200" height="60" viewBox="0 0 120 40">
+                <path d="M10 30 Q 20 10, 40 25 Q 50 10, 70 25 Q 90 10, 110 30 Z" fill="#ffffff" />
+            </svg>
+        </div>
     </div>
-  <div style="background:#d6dff7;border-top:1px solid #aca899;padding:4px;display:flex;justify-content:flex-end;gap:8px">
-    <div class="menu-item" style="padding:4px 12px" onclick="alert('Disconnessione...');location.reload()">Disconnetti</div>
-    <div class="menu-item" style="padding:4px 12px" onclick="if(confirm('Spegnere kOS?'))window.close()">Spegni</div>
-  </div>
-</div>
 
-<script>
-const fs = JSON.parse(localStorage.getItem('kOS_XP_fs') || '{"C:":{"Documents":{},"Pictures":{},"Desktop":{},"Windows":{"System32":{}}}}');
-const users = JSON.parse(localStorage.getItem('kOS_users') || '["Administrator"]');
-const settings = JSON.parse(localStorage.getItem('kOS_settings') || '{"bg":"bliss","theme":"xp"}');
-const recycle = JSON.parse(localStorage.getItem('kOS_recycle') || '[]');
-const windows = {};
-let zIndex = 100, activeWin = null, selectedIcon = null;
-const historyStack = { ie: [] };
-let historyIndex = { ie: -1 };
+    <!-- AREA DI LAVORO (DESKTOP) -->
+    <div class="flex-1 w-full relative p-4 z-10 flex flex-col flex-wrap content-start items-start gap-6 select-none" id="desktop-grid" style="height: calc(100vh - 40px);">
+        
+        <!-- Icone del Desktop -->
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kFiles')">
+            <div class="w-12 h-12 flex items-center justify-center text-yellow-400 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-folder-closed"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Risorse del Computer</span>
+        </div>
 
-function save() {
-  localStorage.setItem('kOS_XP_fs', JSON.stringify(fs));
-  localStorage.setItem('kOS_users', JSON.stringify(users));
-  localStorage.setItem('kOS_settings', JSON.stringify(settings));
-  localStorage.setItem('kOS_recycle', JSON.stringify(recycle));
-}
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kMessenger')">
+            <div class="w-12 h-12 flex items-center justify-center text-sky-300 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">kMessenger</span>
+        </div>
 
-function createWindow(id, title, content, w=600, h=450) {
-  if(windows[id]) { focusWindow(id); return windows[id]; }
-  const win = document.createElement('div');
-  win.className = 'window';
-  win.style.width = w+'px'; win.style.height = h+'px';
-  win.style.left = (60+Object.keys(windows).length*25)+'px';
-  win.style.top = (60+Object.keys(windows).length*25)+'px';
-  const iconSvg = document.querySelector(`[data-app="${id}"] img`)?.src || '';
-  win.innerHTML = `<div class="titlebar" onmousedown="dragStart(event,'${id}')"><div class="title"><img src="${iconSvg}"><span>${title}</span></div><div class="buttons"><div class="btn-win" onclick="minimize('${id}')">0</div><div class="btn-win" onclick="maximize('${id}')">1</div><div class="btn-win close" onclick="closeWindow('${id}')">r</div></div></div>${content}`;
-  document.body.appendChild(win);
-  win.style.display = 'flex';
-  windows[id] = win;
-  addTaskbarItem(id, title, iconSvg);
-  focusWindow(id);
-  return win;
-}
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('KExplorer')">
+            <div class="w-12 h-12 flex items-center justify-center text-blue-500 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">KExplorer</span>
+        </div>
 
-function focusWindow(id) {
-  zIndex++; windows[id].style.zIndex = zIndex; activeWin = id;
-  document.querySelectorAll('.task-item').forEach(t => t.classList.remove('active'));
-  document.querySelector(`[data-win="${id}"]`)?.classList.add('active');
-}
-function closeWindow(id) { windows[id].remove(); delete windows[id]; document.querySelector(`[data-win="${id}"]`)?.remove(); }
-function minimize(id) { windows[id].style.display = 'none'; }
-function maximize(id) {
-  const w = windows[id];
-  if(w.dataset.max === '1') { w.style.width = w.dataset.w; w.style.height = w.dataset.h; w.style.left = w.dataset.l; w.style.top = w.dataset.t; w.dataset.max = '0'; }
-  else { w.dataset.w = w.style.width; w.dataset.h = w.style.height; w.dataset.l = w.style.left; w.dataset.t = w.style.top; w.style.width = '100%'; w.style.height = 'calc(100% - 30px)'; w.style.left = '0'; w.style.top = '0'; w.dataset.max = '1'; }
-}
-function addTaskbarItem(id, title, icon) {
-  const item = document.createElement('div');
-  item.className = 'task-item'; item.dataset.win = id;
-  item.innerHTML = `<img src="${icon}"><span>${title}</span>`;
-  item.onclick = () => { if(windows[id].style.display === 'none') { windows[id].style.display = 'flex'; focusWindow(id); } else if(activeWin === id) minimize(id); else focusWindow(id); };
-  document.getElementById('taskbar').appendChild(item);
-}
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kPad')">
+            <div class="w-12 h-12 flex items-center justify-center text-slate-100 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">kPad</span>
+        </div>
 
-let dragWin = null, offsetX, offsetY;
-function dragStart(e, id) { if(e.target.classList.contains('btn-win')) return; dragWin = windows[id]; focusWindow(id); offsetX = e.clientX - dragWin.offsetLeft; offsetY = e.clientY - dragWin.offsetTop; }
-document.onmousemove = e => { if(dragWin &&!dragWin.dataset.max) { dragWin.style.left = (e.clientX - offsetX) + 'px'; dragWin.style.top = (e.clientY - offsetY) + 'px'; } };
-document.onmouseup = () => dragWin = null;
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kCalc')">
+            <div class="w-12 h-12 flex items-center justify-center text-green-400 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-table-cells"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">kCalc</span>
+        </div>
 
-function openApp(app) {
-  document.getElementById('startMenu').style.display = 'none';
-  const apps = {
-    mycomputer: () => createWindow('mycomputer', 'Risorse del computer', `<div class="menubar"><span>File</span><span>Modifica</span><span>Visualizza</span><span>Preferiti</span><span>Strumenti</span></div><div class="content"><div class="grid">${Object.keys(fs['C:']).map(f=>`<div class="grid-item" ondblclick="openFolder('C:/${f}')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><path fill='%23ffd04c' d='M6 14h36v24H6z'/><path fill='%23ff9f0e' d='M6 14h36v6H6z'/></svg>"><div>${f}</div></div>`).join('')}</div></div>`, 700, 500),
-    control: () => createWindow('control', 'Pannello di controllo', `<div class="content"><div class="grid">
-      <div class="grid-item" onclick="openControlPage('display')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='4' y='8' width='40' height='28' fill='%23c0c0c0' stroke='%23808080'/><rect x='8' y='12' width='32' height='20' fill='%23008080'/></svg>"><div>Schermo</div></div>
-      <div class="grid-item" onclick="openControlPage('system')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='8' y='6' width='32' height='36' fill='%23d4d0c8'/><rect x='12' y='10' width='24' height='16' fill='%23008080'/></svg>"><div>Sistema</div></div>
-      <div class="grid-item" onclick="openControlPage('users')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='18' r='8' fill='%23c0c0c0'/><path fill='%23c0c0c0' d='M12 38c0-6 5-10 12-10s12 4 12 10'/></svg>"><div>Account utente</div></div>
-      <div class="grid-item" onclick="openControlPage('datetime')"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='18' fill='white' stroke='%23808080' stroke-width='2'/><path stroke='black' d='M24 24l0 -8M24 24l6 0'/></svg>"><div>Data e ora</div></div>
-    </div></div>`, 600, 400),
-    ie: () => {
-      createWindow('ie', 'kOS Internet Explorer', `<div class="menubar"><span>File</span><span>Modifica</span><span>Visualizza</span><span>Preferiti</span><span>Strumenti</span></div>
-      <div class="ie-bar">
-        <button onclick="ieBack()" id="ieBackBtn" title="Indietro" disabled>←</button>
-        <button onclick="ieForward()" id="ieForwardBtn" title="Avanti" disabled>→</button>
-        <button onclick="go('kos://welcome','ie')" title="Home">🏠</button>
-        <input id="url-ie" value="kos://welcome" onkeydown="if(event.key==='Enter')go(this.value,'ie')" placeholder="Digita indirizzo web o kos://">
-        <button onclick="go(document.getElementById('url-ie').value,'ie')">Vai</button>
-      </div>
-      <iframe id="frame-ie" srcdoc="<div style='padding:20px;font-family:Tahoma'><h2>kOS Internet Explorer</h2><p>Benvenuto!</p><p><b>Pagine kOS private:</b></p><ul><li><a href='kos://settings'>kos://settings</a> - Impostazioni</li><li><a href='kos://system'>kos://system</a> - Sistema</li><li><a href='kos://admin'>kos://admin</a> - Amministrazione</li><li><a href='kos://update'>kos://update</a> - Aggiornamenti</li></ul><p><b>Oppure naviga sul web:</b> prova con example.com, wikipedia.org</p></div>"></iframe>`, 900, 600);
-      historyStack.ie = ['kos://welcome'];
-      historyIndex.ie = 0;
-    },
-    writer: () => createWindow('writer', 'kOffice Writer - Documento1', `<div class="menubar"><span onclick="fileMenu('writer')">File</span><span>Modifica</span><span>Visualizza</span><span>Inserisci</span><span>Formato</span></div><div class="toolbar"><button onclick="saveDoc()"><b>B</b> Salva</button><button onclick="newDoc()">Nuovo</button><button onclick="openDoc()">Apri</button></div><div class="content"><textarea id="doc" placeholder="Inizia a scrivere..."></textarea></div>`, 800, 600),
-    calc: () => { createWindow('calc', 'Calcolatrice', `<div class="menubar"><span>Visualizza</span><span>Modifica</span></div><div class="content"><div class="calc"><input class="calc-display" id="calcDisplay" value="0" readonly><button onclick="calcClear()">C</button><button onclick="calcOp('/')">/</button><button onclick="calcOp('*')">*</button><button onclick="calcOp('-')">-</button><button onclick="calcNum(7)">7</button><button onclick="calcNum(8)">8</button><button onclick="calcNum(9)">9</button><button onclick="calcOp('+')" style="grid-row:span 2">+</button><button onclick="calcNum(4)">4</button><button onclick="calcNum(5)">5</button><button onclick="calcNum(6)">6</button><button onclick="calcNum(1)">1</button><button onclick="calcNum(2)">2</button><button onclick="calcNum(3)">3</button><button onclick="calcEq()" style="grid-row:span 2">=</button><button onclick="calcNum(0)" style="grid-column:span 2">0</button><button onclick="calcNum('.')">.</button></div></div>`, 260, 320); },
-    paint: () => { createWindow('paint', 'Paint - Senza titolo', `<div class="menubar"><span onclick="fileMenu('paint')">File</span><span>Modifica</span><span>Visualizza</span><span>Immagine</span></div><div class="paint-tools">Colore: <input type="color" id="paintColor" value="#000000">Spessore: <input type="range" id="paintSize" min="1" max="20" value="3"><button onclick="clearPaint()">Cancella</button></div><div class="content"><canvas id="canvas" width="1200" height="800"></canvas></div>`, 1000, 700); initPaint(); },
-    mediaplayer: () => createWindow('mediaplayer', 'Windows Media Player', `<div class="menubar"><span onclick="document.getElementById('mediaFile').click()">File</span><span>Visualizza</span><span>Riproduci</span></div><div class="content" style="background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column"><input type="file" id="mediaFile" accept="audio/*,video/*" style="display:none" onchange="playMedia(this)"><video id="player" controls style
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kSlide')">
+            <div class="w-12 h-12 flex items-center justify-center text-orange-400 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-file-powerpoint"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">kSlide</span>
+        </div>
+
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kTerminal')">
+            <div class="w-12 h-12 flex items-center justify-center text-zinc-800 drop-shadow-md text-3xl bg-zinc-200 border-2 border-zinc-400 rounded">
+                <i class="fa-solid fa-terminal text-xl"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Prompt</span>
+        </div>
+
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kPhotos')">
+            <div class="w-12 h-12 flex items-center justify-center text-rose-300 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-image"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Galleria Foto</span>
+        </div>
+
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('kMusic')">
+            <div class="w-12 h-12 flex items-center justify-center text-violet-400 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-circle-play"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Media Player</span>
+        </div>
+
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="openApp('minesweeper')">
+            <div class="w-12 h-12 flex items-center justify-center text-red-500 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-bomb"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Prato Fiorito</span>
+        </div>
+
+        <!-- NUOVA ICONA PER CARICAMENTO DIRETTO -->
+        <div class="desktop-icon flex flex-col items-center justify-center text-center w-20 cursor-pointer p-1 rounded hover:bg-white/20 hover:outline hover:outline-1 hover:outline-white/40" onclick="window.triggerFileInput()">
+            <div class="w-12 h-12 flex items-center justify-center text-lime-400 drop-shadow-md text-3xl">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <span class="text-white text-xs font-semibold drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)] mt-1">Carica File</span>
+        </div>
+
+        <!-- CONTENITORE FINESTRE ATTIVE -->
+        <div id="windows-container" class="absolute inset-0 pointer-events-none">
+            <!-- Le finestre verranno iniettate qui via JS -->
+        </div>
+    </div>
+
+    <!-- AUDIO & NOTIFICATION SYSTEM (CUSTOM ALERT MODAL) -->
+    <div id="custom-alert" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 pointer-events-auto">
+        <div class="bg-[#d4d0c8] retro-bevel w-80 p-1 flex flex-col text-sm">
+            <div class="xp-window-header text-white font-bold px-2 py-1 flex justify-between items-center">
+                <span id="alert-title">Messaggio di Sistema</span>
+                <button onclick="closeAlert()" class="bg-red-500 text-white w-5 h-5 flex items-center justify-center font-bold border border-white hover:bg-red-600 rounded">X</button>
+            </div>
+            <div class="p-4 flex gap-3 items-center">
+                <div class="text-yellow-500 text-3xl" id="alert-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="flex-1 text-zinc-800 font-semibold" id="alert-message">Notifica di sistema.</div>
+            </div>
+            <div class="flex justify-end gap-2 p-2 bg-[#d4d0c8]">
+                <button onclick="closeAlert()" class="bg-[#d4d0c8] text-zinc-900 border-t-white border-l-white border-b-zinc-700 border-r-zinc-700 border-2 px-4 py-1 active:border-inset font-bold">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TASKBAR (SOTTO) -->
+    <div class="xp-taskbar-gradient w-full h-10 flex items-center justify-between px-1 border-t border-blue-400 relative z-30 select-none">
+        
+        <!-- Pulsante Start -->
+        <div class="relative">
+            <button id="start-btn" onclick="toggleStartMenu()" class="xp-start-gradient h-8 flex items-center gap-2 px-4 rounded-r-xl border-y border-r border-green-300 shadow-md active:opacity-90 hover:brightness-110">
+                <!-- Fallback del logo kOS caricato -->
+                <img src="kOS.png" alt="kOS" class="h-6 object-contain" onerror="this.onerror=null; this.outerHTML='<span class=\'font-black italic text-yellow-300 text-lg\'>kOS</span>';">
+                <span class="text-white font-black italic text-lg tracking-wide shadow-sm">start</span>
+            </button>
+
+            <!-- MENU START (XP STYLE) -->
+            <div id="start-menu" class="hidden absolute bottom-9 left-0 w-80 bg-white border-2 border-[#0058e4] rounded-t-lg shadow-2xl flex flex-col z-40 text-sm overflow-hidden">
+                <!-- Header Start Menu -->
+                <div class="xp-window-header p-3 flex items-center gap-3 text-white">
+                    <div class="w-10 h-10 rounded-full bg-blue-300 border border-white overflow-hidden flex items-center justify-center text-xl text-blue-900 font-bold">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-base" id="username-display">Utente kOS</div>
+                        <div class="text-xs text-blue-200">Sessione Online attiva</div>
+                    </div>
+                </div>
+
+                <!-- Corpo Start Menu (2 Colonne) -->
+                <div class="flex flex-1 min-h-[300px]">
+                    <!-- Colonna Sinistra (Programmi principali) -->
+                    <div class="w-1/2 bg-white p-2 border-r border-zinc-200 flex flex-col gap-1">
+                        <div class="text-xs text-zinc-500 font-bold px-1 mb-1">PROGRAMMI POPOLARI</div>
+                        <button onclick="openAndCloseStart('kMessenger')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-comments text-sky-500 text-lg"></i>
+                            <span>kMessenger</span>
+                        </button>
+                        <button onclick="openAndCloseStart('KExplorer')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-compass text-blue-500 text-lg"></i>
+                            <span>KExplorer</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kPad')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-file-lines text-slate-500 text-lg"></i>
+                            <span>kPad</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kCalc')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-table-cells text-green-500 text-lg"></i>
+                            <span>kCalc</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kSlide')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-file-powerpoint text-orange-500 text-lg"></i>
+                            <span>kSlide</span>
+                        </button>
+                        <hr class="my-1">
+                        <button onclick="openAndCloseStart('minesweeper')" class="flex items-center gap-2 p-1.5 hover:bg-blue-100 rounded text-left">
+                            <i class="fa-solid fa-bomb text-red-500 text-lg"></i>
+                            <span>Prato Fiorito</span>
+                        </button>
+                    </div>
+
+                    <!-- Colonna Destra (Collegamenti di sistema) -->
+                    <div class="w-1/2 bg-sky-50 p-2 flex flex-col gap-2">
+                        <button onclick="openAndCloseStart('kFiles')" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left font-semibold">
+                            <i class="fa-solid fa-folder text-yellow-500"></i>
+                            <span>I miei documenti</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kPhotos')" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left font-semibold">
+                            <i class="fa-solid fa-image-portrait text-rose-400"></i>
+                            <span>Galleria Foto</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kMusic')" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left font-semibold">
+                            <i class="fa-solid fa-circle-play text-violet-500"></i>
+                            <span>Media Player</span>
+                        </button>
+                        <button onclick="openAndCloseStart('kTerminal')" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left font-semibold">
+                            <i class="fa-solid fa-square-terminal text-zinc-700"></i>
+                            <span>Console Comandi</span>
+                        </button>
+                        <div class="mt-auto border-t border-sky-200 pt-2 flex flex-col gap-1">
+                            <button onclick="changeWallpaperDialog()" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left text-xs">
+                                <i class="fa-solid fa-desktop text-zinc-600"></i>
+                                <span>Cambia Sfondo</span>
+                            </button>
+                            <button onclick="setNicknameDialog()" class="flex items-center gap-2 p-1 hover:text-blue-700 text-left text-xs">
+                                <i class="fa-solid fa-pen text-zinc-600"></i>
+                                <span>Imposta Nickname</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Start Menu -->
+                <div class="bg-blue-800 p-2 flex justify-between items-center text-white text-xs border-t border-blue-600">
+                    <button onclick="location.reload()" class="flex items-center gap-1.5 hover:bg-blue-700 px-2 py-1 rounded">
+                        <i class="fa-solid fa-rotate-right text-orange-400"></i>
+                        <span>Riavvia kOS</span>
+                    </button>
+                    <button onclick="triggerShutdown()" class="flex items-center gap-1.5 hover:bg-blue-700 px-2 py-1 rounded">
+                        <i class="fa-solid fa-power-off text-red-400"></i>
+                        <span>Spegni</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista delle finestre aperte sulla Taskbar -->
+        <div id="taskbar-windows" class="flex-1 flex gap-1 px-3 overflow-x-auto h-full items-center select-none">
+            <!-- Pulsanti finestre attive generati dinamicamente -->
+        </div>
+
+        <!-- Area di notifica / Tray (Orario e Connessione) -->
+        <div class="bg-sky-500 h-8 px-3 rounded-l-lg border-l border-y border-sky-300 flex items-center gap-3 text-white text-xs select-none">
+            <i class="fa-solid fa-wifi text-green-300 animate-pulse" title="Connesso a kOS Cloud"></i>
+            <i class="fa-solid fa-volume-high cursor-pointer hover:opacity-80" onclick="playClassicBeep(440, 200)" title="Audio Attivo"></i>
+            <span id="system-clock" class="font-bold tracking-wider">00:00</span>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGICA OPERATIVA (kOS CORE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // CONFIGURAZIONE ED INIZIALIZZAZIONE CLOUD (FIRESTORE)
+        const firebaseConfig = {
+            apiKey: "", // Gestito a runtime dall'ambiente
+            authDomain: "kos-retro.firebaseapp.com",
+            projectId: "kos-retro",
+            storageBucket: "kos-retro.appspot.com",
+            messagingSenderId: "123456789",
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'kOS-app-id'
+        };
+
+        // Fallback robusto se config non caricata
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let nickname = "Utente_" + Math.floor(1000 + Math.random() * 9000);
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            
+            // Accesso anonimo automatico per collaborazione in tempo reale
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log("kOS Cloud Autenticato con UID:", user.uid);
+                    setupChatListener();
+                }
+            });
+        } catch (e) {
+            console.warn("Utilizzo del database locale offline. I messaggi saranno simulati.");
+        }
+
+        // Variabili Globali Sistema con supporto a file personali pre-caricati e nuove directory di tipo
+        window.activeWindows = [];
+        window.focusedWindow = null;
+        window.fileSystem = {
+            "Documenti": {
+                "benvenuto.txt": "Benvenuto in kOS! Un sistema operativo web in grado di navigare, scrivere presentazioni, giocare ed interagire in tempo reale.",
+                "appunti.txt": "Cose da fare oggi:\n- Provare KExplorer\n- Vincere a Prato Fiorito\n- Chiacchierare su kMessenger con altri utenti online.\n- Caricare file .mp3, .mp4, .png e altro con il pulsante 'Carica File'!"
+            },
+            "Fogli_di_Calcolo": {
+                "bilancio.kcalc": "Prodotto,Vendite,Prezzo\nkOS Pro,120,49\nKExplorer,500,0"
+            },
+            "Presentazioni": {
+                "kos_intro.kslide": JSON.stringify([
+                    { title: "kOS Operating System", text: "L'era moderna incontra l'estetica leggendaria." },
+                    { title: "Il Nostro Messaggero", text: "Chatta in tempo reale con tutti utilizzando kMessenger." }
+                ])
+            },
+            "Immagini": {
+                "Valle di Montagna": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop",
+                "Prati al crepuscolo": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop",
+                "Sentiero nella Foresta": "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop"
+            },
+            "Media": {} // Spazio dedicato a tracce audio (.mp3, .wav) o video (.mp4, .webm) caricati dall'utente
+        };
+
+        // AUDIO SYNTHESIZER (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        window.playClassicBeep = function(frequency, duration) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration/1000);
+                osc.stop(audioCtx.currentTime + duration/1000);
+            } catch (e) {}
+        }
+
+        window.playXpStartup = function() {
+            // Suono armonicamente ispirato all'avvio classico
+            const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
+            notes.forEach((freq, idx) => {
+                setTimeout(() => {
+                    playClassicBeep(freq, 800 - idx * 100);
+                }, idx * 120);
+            });
+        }
+
+        // FUNZIONE DI UPLOAD GLOBALE MULTIMEDIALE
+        window.triggerFileInput = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            // Accetta file di testo, immagini, audio e video
+            input.accept = ".txt,.png,.jpg,.jpeg,.gif,.mp3,.wav,.mp4,.webm";
+            
+            input.onchange = (e) => {
+                const files = e.target.files;
+                if (!files.length) return;
+                
+                let loadedCount = 0;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    
+                    if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
+                        reader.onload = function(evt) {
+                            window.fileSystem.Immagini[file.name] = evt.target.result;
+                            fileProcessed();
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (['mp3', 'wav', 'mp4', 'webm'].includes(ext)) {
+                        reader.onload = function(evt) {
+                            window.fileSystem.Media[file.name] = evt.target.result;
+                            fileProcessed();
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (ext === 'txt') {
+                        reader.onload = function(evt) {
+                            window.fileSystem.Documenti[file.name] = evt.target.result;
+                            fileProcessed();
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        // Trattamento generico come documento testuale
+                        reader.onload = function(evt) {
+                            window.fileSystem.Documenti[file.name] = evt.target.result;
+                            fileProcessed();
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                function fileProcessed() {
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        showNotification("Importazione File", `Caricati con successo ${files.length} file nel sistema!`);
+                        playClassicBeep(700, 150);
+                        // Forza il refresh delle schermate aperte per visualizzare subito i nuovi file
+                        refreshWindowContents();
+                    }
+                }
+            };
+            input.click();
+        }
+
+        // Funzione per aggiornare le app attive che visualizzano file
+        function refreshWindowContents() {
+            activeWindows.forEach(win => {
+                const container = document.querySelector(`#${win.id} .flex-1`);
+                if (container) {
+                    if (win.appType === 'kFiles' || win.appType === 'kPhotos' || win.appType === 'kMusic') {
+                        // Svuota e ricarica i contenuti dell'applicazione
+                        container.innerHTML = '';
+                        injectAppContent(win.appType, container, win.id);
+                    }
+                }
+            });
+        }
+
+        // OROLOGIO E SYSTEM UTILITIES
+        function updateClock() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('system-clock').textContent = `${hrs}:${mins}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // AVVIO DI SISTEMA
+        window.addEventListener('load', () => {
+            playXpStartup();
+            document.getElementById('username-display').innerText = nickname;
+            showNotification("Benvenuto in kOS!", "Il sistema è pronto. Fai clic su 'Carica File' per importare la tua musica, immagini o video.");
+        });
+
+        // MENU START CONTROLS
+        window.toggleStartMenu = function() {
+            const menu = document.getElementById('start-menu');
+            menu.classList.toggle('hidden');
+            playClassicBeep(600, 50);
+        }
+
+        // CHIUSURA START MENU AL CLICK FUORI
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('start-menu');
+            const startBtn = document.getElementById('start-btn');
+            if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // APERTURA APP DA START
+        window.openAndCloseStart = function(appId) {
+            document.getElementById('start-menu').classList.add('hidden');
+            openApp(appId);
+        }
+
+        // GESTORE FINESTRE (APRI / CHIUDI / DRAG & DROP / RESIZE)
+        window.openApp = function(appType) {
+            // Se l'app è già aperta, portala in primo piano
+            const existing = activeWindows.find(w => w.appType === appType);
+            if (existing) {
+                focusWindow(existing.id);
+                return;
+            }
+
+            const id = 'win-' + Math.floor(Math.random() * 100000);
+            const titles = {
+                kMessenger: 'kMessenger - Messaggistica Istantanea',
+                KExplorer: 'KExplorer Web Browser',
+                kPad: 'kPad Text Editor',
+                kCalc: 'kCalc - Foglio di Calcolo',
+                kSlide: 'kSlide Presentations',
+                kTerminal: 'Prompt dei Comandi kOS',
+                kPhotos: 'Galleria Foto / Immagini',
+                kMusic: 'kPlayer Retro & Video Player',
+                kFiles: 'Esplora Risorse',
+                minesweeper: 'Prato Fiorito (Minesweeper)'
+            };
+
+            const width = Math.min(window.innerWidth - 40, 700);
+            const height = 480;
+            const x = 50 + (activeWindows.length * 30);
+            const y = 50 + (activeWindows.length * 20);
+
+            const newWin = {
+                id,
+                title: titles[appType] || appType,
+                appType,
+                x,
+                y,
+                width,
+                height,
+                isMinimized: false,
+                isMaximized: false
+            };
+
+            activeWindows.push(newWin);
+            renderWindow(newWin);
+            focusWindow(id);
+            updateTaskbar();
+            playClassicBeep(520, 80);
+        }
+
+        window.closeWindow = function(id) {
+            activeWindows = activeWindows.filter(w => w.id !== id);
+            const el = document.getElementById(id);
+            if (el) el.remove();
+            updateTaskbar();
+            playClassicBeep(300, 100);
+        }
+
+        window.minimizeWindow = function(id) {
+            const win = activeWindows.find(w => w.id === id);
+            if (win) {
+                win.isMinimized = true;
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            }
+            updateTaskbar();
+        }
+
+        window.maximizeWindow = function(id) {
+            const win = activeWindows.find(w => w.id === id);
+            if (win) {
+                win.isMaximized = !win.isMaximized;
+                const el = document.getElementById(id);
+                if (el) {
+                    if (win.isMaximized) {
+                        el.style.top = '0';
+                        el.style.left = '0';
+                        el.style.width = '100vw';
+                        el.style.height = 'calc(100vh - 40px)';
+                    } else {
+                        el.style.top = `${win.y}px`;
+                        el.style.left = `${win.x}px`;
+                        el.style.width = `${win.width}px`;
+                        el.style.height = `${win.height}px`;
+                    }
+                }
+            }
+        }
+
+        window.focusWindow = function(id) {
+            activeWindows.forEach(w => {
+                const el = document.getElementById(w.id);
+                if (el) {
+                    if (w.id === id) {
+                        el.style.zIndex = '30';
+                        el.classList.remove('opacity-90');
+                        el.classList.remove('hidden');
+                        w.isMinimized = false;
+                    } else {
+                        el.style.zIndex = '20';
+                        el.classList.add('opacity-90');
+                    }
+                }
+            });
+            focusedWindow = id;
+            updateTaskbar();
+        }
+
+        function updateTaskbar() {
+            const container = document.getElementById('taskbar-windows');
+            container.innerHTML = '';
+            activeWindows.forEach(w => {
+                const isFocused = focusedWindow === w.id;
+                const btn = document.createElement('button');
+                btn.className = `h-8 px-3 rounded text-white text-xs font-semibold flex items-center gap-1 border border-blue-400 active:opacity-95 ${isFocused ? 'bg-blue-800 shadow-inner' : 'bg-blue-600 hover:bg-blue-500'}`;
+                btn.onclick = () => {
+                    if (w.isMinimized || !isFocused) {
+                        focusWindow(w.id);
+                    } else {
+                        minimizeWindow(w.id);
+                    }
+                };
+                
+                // Icona dell'app
+                let iconClass = 'fa-window-maximize';
+                if (w.appType === 'kMessenger') iconClass = 'fa-comments';
+                if (w.appType === 'KExplorer') iconClass = 'fa-compass';
+                if (w.appType === 'kPad') iconClass = 'fa-file-lines';
+                if (w.appType === 'kCalc') iconClass = 'fa-table-cells';
+                if (w.appType === 'kSlide') iconClass = 'fa-file-powerpoint';
+                if (w.appType === 'kTerminal') iconClass = 'fa-terminal';
+                if (w.appType === 'kPhotos') iconClass = 'fa-image';
+                if (w.appType === 'kMusic') iconClass = 'fa-circle-play';
+                if (w.appType === 'kFiles') iconClass = 'fa-folder';
+                if (w.appType === 'minesweeper') iconClass = 'fa-bomb';
+
+                btn.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span class="max-w-[120px] truncate">${w.title}</span>`;
+                container.appendChild(btn);
+            });
+        }
+
+        // GENERAZIONE E RENDERING DELLE FINESTRE
+        function renderWindow(win) {
+            const winEl = document.createElement('div');
+            winEl.id = win.id;
+            winEl.className = "absolute bg-[#d4d0c8] retro-bevel flex flex-col shadow-2xl pointer-events-auto rounded-t-md overflow-hidden select-text";
+            winEl.style.width = `${win.width}px`;
+            winEl.style.height = `${win.height}px`;
+            winEl.style.left = `${win.x}px`;
+            winEl.style.top = `${win.y}px`;
+            winEl.style.zIndex = '30';
+
+            // Costruiamo la barra del titolo stile XP
+            const titleBar = document.createElement('div');
+            titleBar.className = "xp-window-header text-white flex justify-between items-center px-2 py-1 cursor-move select-none";
+            titleBar.innerHTML = `
+                <div class="flex items-center gap-1.5 font-bold text-sm tracking-wide w-[80%] truncate">
+                    <img src="kOS.png" alt="" class="h-4 w-4" onerror="this.onerror=null; this.outerHTML='<i class=\'fa-solid fa-window-restore\'></i>';">
+                    <span>${win.title}</span>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="minimizeWindow('${win.id}')" class="bg-blue-600 text-white w-5 h-5 flex items-center justify-center font-bold border border-blue-400 hover:bg-blue-500 rounded text-xs">-</button>
+                    <button onclick="maximizeWindow('${win.id}')" class="bg-blue-600 text-white w-5 h-5 flex items-center justify-center font-bold border border-blue-400 hover:bg-blue-500 rounded text-xs">▢</button>
+                    <button onclick="closeWindow('${win.id}')" class="bg-red-500 text-white w-5 h-5 flex items-center justify-center font-bold border border-red-400 hover:bg-red-600 rounded text-xs">X</button>
+                </div>
+            `;
+
+            // Drag & Drop
+            let isDragging = false;
+            let offset = { x: 0, y: 0 };
+            titleBar.addEventListener('mousedown', (e) => {
+                if (win.isMaximized) return;
+                // Impedisci l'attivazione del drag se clicco sui pulsanti della barra
+                if (e.target.closest('button')) return;
+                isDragging = true;
+                offset.x = e.clientX - winEl.offsetLeft;
+                offset.y = e.clientY - winEl.offsetTop;
+                focusWindow(win.id);
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                win.x = e.clientX - offset.x;
+                win.y = e.clientY - offset.y;
+                winEl.style.left = `${win.x}px`;
+                winEl.style.top = `${win.y}px`;
+            });
+            document.addEventListener('mouseup', () => { isDragging = false; });
+
+            // Touch Support per Drag & Drop
+            titleBar.addEventListener('touchstart', (e) => {
+                if (win.isMaximized) return;
+                if (e.target.closest('button')) return;
+                isDragging = true;
+                const touch = e.touches[0];
+                offset.x = touch.clientX - winEl.offsetLeft;
+                offset.y = touch.clientY - winEl.offsetTop;
+                focusWindow(win.id);
+            });
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                win.x = touch.clientX - offset.x;
+                win.y = touch.clientY - offset.y;
+                winEl.style.left = `${win.x}px`;
+                winEl.style.top = `${win.y}px`;
+            });
+            document.addEventListener('touchend', () => { isDragging = false; });
+
+            // Contenuto della Finestra
+            const contentContainer = document.createElement('div');
+            contentContainer.className = "flex-1 flex flex-col p-1 overflow-auto bg-[#d4d0c8]";
+            contentContainer.style.height = "calc(100% - 28px)";
+
+            // Inject dell'interfaccia specifica dell'app
+            injectAppContent(win.appType, contentContainer, win.id);
+
+            winEl.appendChild(titleBar);
+            winEl.appendChild(contentContainer);
+            document.getElementById('windows-container').appendChild(winEl);
+
+            // Click focus listener
+            winEl.addEventListener('mousedown', () => {
+                focusWindow(win.id);
+            });
+        }
+
+        // CONTROLLER DI CARICAMENTO APPLICAZIONI (Iniezione Codice UI)
+        function injectAppContent(appType, container, winId) {
+            if (appType === 'kMessenger') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-slate-100 p-2 text-sm text-zinc-900">
+                        <div class="flex items-center gap-2 mb-2 bg-[#d4d0c8] p-1.5 border-b border-zinc-400">
+                            <span class="font-bold">A:</span>
+                            <input id="chat-address" type="text" placeholder="Tutti (lascia vuoto) o scrivi un nickname" class="flex-1 px-2 py-0.5 border border-zinc-500 rounded text-xs">
+                            <button id="set-dest" class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs">Filtra</button>
+                        </div>
+                        <div id="chat-messages" class="flex-1 bg-white border border-zinc-400 p-2 overflow-y-auto mb-2 text-xs flex flex-col gap-1.5 h-[240px]">
+                            <div class="text-zinc-400 italic text-center">[Connessione alla chat globale in corso...]</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <input id="chat-input" type="text" placeholder="Scrivi un messaggio e premi Invio..." class="flex-1 px-2 py-1 border border-zinc-400 rounded">
+                            <button id="chat-send-btn" class="bg-green-600 text-white font-bold px-4 py-1 rounded">Invia</button>
+                        </div>
+                    </div>
+                `;
+
+                // Logica Messenger locale ed online
+                const chatInput = container.querySelector('#chat-input');
+                const chatSendBtn = container.querySelector('#chat-send-btn');
+                const chatMessages = container.querySelector('#chat-messages');
+                const chatAddress = container.querySelector('#chat-address');
+                const setDestBtn = container.querySelector('#set-dest');
+
+                let activeRecipient = "Tutti";
+
+                setDestBtn.onclick = () => {
+                    activeRecipient = chatAddress.value.trim() || "Tutti";
+                    showNotification("kMessenger", `Chat filtrata per: ${activeRecipient}`);
+                    chatMessages.innerHTML += `<div class="text-blue-500 italic">[Ora stai chattando con: ${activeRecipient}]</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                };
+
+                const sendMessage = async () => {
+                    const text = chatInput.value.trim();
+                    if (!text) return;
+                    chatInput.value = '';
+
+                    const msgData = {
+                        sender: nickname,
+                        recipient: activeRecipient,
+                        text: text,
+                        timestamp: Date.now()
+                    };
+
+                    if (db) {
+                        try {
+                            const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'messages');
+                            await addDoc(collectionRef, msgData);
+                        } catch (e) {
+                            renderLocalMessage(msgData);
+                        }
+                    } else {
+                        renderLocalMessage(msgData);
+                    }
+
+                    // Se non ci sono altri utenti connessi, l'AI risponde simulando
+                    triggerBotResponse(text, activeRecipient, chatMessages);
+                };
+
+                chatInput.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
+                chatSendBtn.onclick = sendMessage;
+
+                // Salva listener globale per agganciare messaggi Firestore
+                window.chatMessagesEl = chatMessages;
+            }
+
+            else if (appType === 'KExplorer') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-slate-200">
+                        <!-- Barra di navigazione -->
+                        <div class="bg-[#d4d0c8] p-1.5 border-b border-zinc-400 flex gap-2 items-center text-xs">
+                            <button id="back-btn" class="border border-zinc-400 px-1 bg-white disabled:opacity-50"><i class="fa-solid fa-arrow-left"></i></button>
+                            <input id="browser-url" type="text" value="https://google.it" class="flex-1 px-2 py-1 border border-zinc-400">
+                            <button id="go-btn" class="bg-blue-600 text-white font-bold px-3 py-1 rounded">Vai</button>
+                        </div>
+                        <!-- Area Contenuto Browser -->
+                        <div id="browser-viewport" class="flex-1 bg-white overflow-y-auto p-4 text-zinc-900 border border-zinc-300">
+                            <div class="text-center py-8">
+                                <h2 class="text-xl font-bold text-blue-700">Benvenuto su KExplorer</h2>
+                                <p class="text-zinc-600 text-xs mt-2">Usa la barra dell'indirizzo soprastante per navigare sul web libero o cercare informazioni!</p>
+                                <div class="mt-6 max-w-md mx-auto bg-slate-50 border p-3 rounded text-left">
+                                    <div class="font-bold text-xs">Esempi di utilizzo:</div>
+                                    <ul class="list-disc pl-4 text-xs text-zinc-600 mt-1">
+                                        <li>Cerca qualcosa inserendo una query</li>
+                                        <li>Richiedi un indirizzo come "wikipedia.it/astronomia"</li>
+                                        <li>Chiedi aiuto o fatti spiegare un concetto</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const browserUrl = container.querySelector('#browser-url');
+                const goBtn = container.querySelector('#go-btn');
+                const viewport = container.querySelector('#browser-viewport');
+
+                goBtn.onclick = async () => {
+                    const queryUrl = browserUrl.value.trim();
+                    if (!queryUrl) return;
+
+                    viewport.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-zinc-500">
+                        <i class="fa-solid fa-spinner animate-spin text-3xl mb-2"></i>
+                        <span>Interrogazione Gemini API e caricamento sicuro in corso...</span>
+                    </div>`;
+
+                    try {
+                        const content = await fetchGeminiBrowsing(queryUrl);
+                        viewport.innerHTML = content;
+                    } catch (err) {
+                        viewport.innerHTML = `<div class="p-4 text-red-500">Errore di connessione a KExplorer: ${err.message}</div>`;
+                    }
+                };
+
+                browserUrl.onkeydown = (e) => { if (e.key === 'Enter') goBtn.click(); };
+            }
+
+            else if (appType === 'kPad') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-white text-zinc-900">
+                        <div class="bg-[#d4d0c8] p-1.5 border-b border-zinc-400 flex gap-2 text-xs">
+                            <button id="save-btn" class="border border-zinc-500 px-2 py-0.5 bg-white"><i class="fa-solid fa-floppy-disk text-blue-600"></i> Salva</button>
+                            <input id="filename" type="text" placeholder="nome.txt" class="border px-1.5 w-32" value="senza_nome.txt">
+                        </div>
+                        <textarea id="pad-text" class="flex-1 p-3 outline-none resize-none font-mono text-xs text-zinc-900" placeholder="Inizia a scrivere qui..."></textarea>
+                    </div>
+                `;
+
+                const saveBtn = container.querySelector('#save-btn');
+                const filenameInput = container.querySelector('#filename');
+                const padText = container.querySelector('#pad-text');
+
+                saveBtn.onclick = () => {
+                    const filename = filenameInput.value.trim() || 'senza_nome.txt';
+                    const text = padText.value;
+                    window.fileSystem.Documenti[filename] = text;
+                    showNotification("kPad", `File '${filename}' salvato con successo in 'Documenti'!`);
+                    playClassicBeep(650, 100);
+                };
+            }
+
+            else if (appType === 'kCalc') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-white text-zinc-900 text-xs">
+                        <div class="bg-[#d4d0c8] p-1 border-b border-zinc-400 flex gap-2 items-center">
+                            <button id="calc-save" class="border border-zinc-500 bg-white px-2 py-0.5"><i class="fa-solid fa-floppy-disk text-green-600"></i> Salva</button>
+                            <input id="calc-filename" type="text" class="border px-1 w-24" value="bilancio.kcalc">
+                        </div>
+                        <div class="overflow-auto flex-1">
+                            <table id="calc-table" class="w-full border-collapse border border-zinc-300">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="border border-zinc-300 p-1 w-8"></th>
+                                        <th class="border border-zinc-300 p-1">A</th>
+                                        <th class="border border-zinc-300 p-1">B</th>
+                                        <th class="border border-zinc-300 p-1">C</th>
+                                        <th class="border border-zinc-300 p-1">D</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Righe generate da JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-slate-50 border-t p-2 flex items-center justify-between">
+                            <span class="text-[10px] text-zinc-500">Istruzioni: scrivi semplici dati testuali divisi da virgole.</span>
+                        </div>
+                    </div>
+                `;
+
+                const tableBody = container.querySelector('#calc-table tbody');
+                // Genera 10 righe fittizie editabili
+                for (let r = 1; r <= 10; r++) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="bg-slate-100 border border-zinc-300 text-center font-bold p-0.5">${r}</td>
+                        <td class="border border-zinc-300 p-0.5"><input type="text" class="w-full outline-none px-1 text-xs" id="cell-A${r}"></td>
+                        <td class="border border-zinc-300 p-0.5"><input type="text" class="w-full outline-none px-1 text-xs" id="cell-B${r}"></td>
+                        <td class="border border-zinc-300 p-0.5"><input type="text" class="w-full outline-none px-1 text-xs" id="cell-C${r}"></td>
+                        <td class="border border-zinc-300 p-0.5"><input type="text" class="w-full outline-none px-1 text-xs" id="cell-D${r}"></td>
+                    `;
+                    tableBody.appendChild(tr);
+                }
+
+                // Inseriamo dati d'esempio predefiniti
+                const defaultData = [
+                    ['A1', 'Prodotto'], ['B1', 'Vendite'], ['C1', 'Costo Unitario'], ['D1', 'Totale fittizio'],
+                    ['A2', 'kOS Licenze'], ['B2', '120'], ['C2', '50'], ['D2', '6000'],
+                    ['A3', 'Mappe Web'], ['B3', '30'], ['C3', '150'], ['D3', '4500']
+                ];
+                defaultData.forEach(([cell, val]) => {
+                    const el = container.querySelector(`#cell-${cell}`);
+                    if (el) el.value = val;
+                });
+            }
+
+            else if (appType === 'kSlide') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-slate-300 text-zinc-900 text-xs">
+                        <div class="bg-[#d4d0c8] p-1.5 border-b border-zinc-400 flex justify-between">
+                            <div class="flex gap-2">
+                                <button id="add-slide" class="bg-blue-600 text-white px-2 py-0.5 rounded">Nuova Slide</button>
+                                <button id="slide-preview" class="bg-green-600 text-white px-2 py-0.5 rounded"><i class="fa-solid fa-play"></i> Presenta</button>
+                            </div>
+                            <span class="font-bold">Presentazione kOS</span>
+                        </div>
+                        <div class="flex-1 flex p-2 gap-2 overflow-hidden">
+                            <!-- Lista slides -->
+                            <div id="slide-list" class="w-24 bg-white border border-zinc-400 p-1 overflow-y-auto flex flex-col gap-1.5">
+                                <!-- Thumbnails -->
+                            </div>
+                            <!-- Slide Editor -->
+                            <div class="flex-1 bg-white border border-zinc-400 p-4 flex flex-col justify-center items-center relative" id="slide-editor">
+                                <input id="slide-title-input" type="text" placeholder="Titolo della Slide" class="text-xl font-bold text-center border-b w-full max-w-md mb-4 outline-none">
+                                <textarea id="slide-desc-input" placeholder="Corpo del testo della slide..." class="text-sm text-center border w-full max-w-md h-32 p-2 outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                let slides = JSON.parse(window.fileSystem.Presentazioni["kos_intro.kslide"]);
+                let currentIdx = 0;
+
+                const slideList = container.querySelector('#slide-list');
+                const titleInput = container.querySelector('#slide-title-input');
+                const descInput = container.querySelector('#slide-desc-input');
+                const addSlideBtn = container.querySelector('#add-slide');
+                const previewBtn = container.querySelector('#slide-preview');
+
+                function renderSlides() {
+                    slideList.innerHTML = '';
+                    slides.forEach((s, idx) => {
+                        const thumb = document.createElement('div');
+                        thumb.className = `border p-1 text-center cursor-pointer text-[10px] truncate ${idx === currentIdx ? 'bg-blue-200 border-blue-500' : 'bg-slate-50'}`;
+                        thumb.innerHTML = `Slide ${idx+1}<br><span class="font-bold">${s.title || '(Vuota)'}</span>`;
+                        thumb.onclick = () => {
+                            saveCurrentState();
+                            currentIdx = idx;
+                            loadSlideState();
+                        };
+                        slideList.appendChild(thumb);
+                    });
+                }
+
+                function saveCurrentState() {
+                    if (slides[currentIdx]) {
+                        slides[currentIdx].title = titleInput.value;
+                        slides[currentIdx].text = descInput.value;
+                    }
+                }
+
+                function loadSlideState() {
+                    titleInput.value = slides[currentIdx]?.title || '';
+                    descInput.value = slides[currentIdx]?.text || '';
+                    renderSlides();
+                }
+
+                addSlideBtn.onclick = () => {
+                    saveCurrentState();
+                    slides.push({ title: 'Nuovo Titolo', text: 'Nuovo corpo slide.' });
+                    currentIdx = slides.length - 1;
+                    loadSlideState();
+                };
+
+                previewBtn.onclick = () => {
+                    saveCurrentState();
+                    // Modal a schermo intero per presentazione finta
+                    const presModal = document.createElement('div');
+                    presModal.className = "fixed inset-0 bg-blue-900 text-white flex flex-col justify-center items-center z-[100] p-10";
+                    let pIdx = 0;
+
+                    function showPresSlide() {
+                        const s = slides[pIdx];
+                        presModal.innerHTML = `
+                            <div class="text-4xl font-bold mb-8 text-center text-yellow-300 animate-pulse">${s.title}</div>
+                            <div class="text-xl text-center max-w-2xl">${s.text}</div>
+                            <div class="absolute bottom-4 text-xs text-zinc-300">Slide ${pIdx+1} di ${slides.length} | Fai click per avanzare, Esci per tornare indietro</div>
+                            <button id="close-pres-btn" class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 font-bold rounded">Esci</button>
+                        `;
+                        presModal.querySelector('#close-pres-btn').onclick = (e) => {
+                            e.stopPropagation();
+                            presModal.remove();
+                        };
+                    }
+
+                    presModal.onclick = () => {
+                        pIdx++;
+                        if (pIdx >= slides.length) {
+                            presModal.remove();
+                        } else {
+                            showPresSlide();
+                        }
+                    };
+
+                    document.body.appendChild(presModal);
+                    showPresSlide();
+                };
+
+                loadSlideState();
+            }
+
+            else if (appType === 'kTerminal') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-zinc-950 text-emerald-400 font-mono p-2 text-xs">
+                        <div class="flex-1 overflow-y-auto mb-2" id="term-log">
+                            <div>Console di Sistema kOS [Versione 1.0.0]</div>
+                            <div>Scrivi 'help' per vedere tutti i comandi disponibili.</div>
+                            <br>
+                        </div>
+                        <div class="flex gap-1.5 items-center">
+                            <span>kOS_system&gt;</span>
+                            <input id="term-input" type="text" class="bg-transparent outline-none flex-1 border-none text-emerald-400" autofocus>
+                        </div>
+                    </div>
+                `;
+
+                const termInput = container.querySelector('#term-input');
+                const termLog = container.querySelector('#term-log');
+
+                termInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        const cmd = termInput.value.trim();
+                        termInput.value = '';
+                        if (!cmd) return;
+
+                        termLog.innerHTML += `<div>kOS_system&gt; ${cmd}</div>`;
+                        const parts = cmd.split(' ');
+                        const command = parts[0].toLowerCase();
+
+                        if (command === 'help') {
+                            termLog.innerHTML += `
+                                <div>Comandi Disponibili:</div>
+                                <div>- help: Visualizza questa guida</div>
+                                <div>- dir: Elenca tutti i file del sistema</div>
+                                <div>- cat [folder]/[file]: Legge il contenuto di un file</div>
+                                <div>- color [codice_colore]: Cambia il colore del testo (es. text-yellow-500)</div>
+                                <div>- beep: Riproduce un suono retrò</div>
+                                <div>- sysinfo: Mostra le statistiche di kOS</div>
+                                <div>- clear: Pulisce lo schermo</div>
+                            `;
+                        } else if (command === 'dir') {
+                            termLog.innerHTML += `<div>Directory di kOS:</div>`;
+                            Object.keys(window.fileSystem).forEach(fol => {
+                                termLog.innerHTML += `<div class="text-yellow-400">[DIR] ${fol}</div>`;
+                                Object.keys(window.fileSystem[fol]).forEach(fil => {
+                                    termLog.innerHTML += `<div>      - ${fil}</div>`;
+                                });
+                            });
+                        } else if (command === 'sysinfo') {
+                            termLog.innerHTML += `
+                                <div>Sistema Operativo: kOS per browser</div>
+                                <div>Memoria Virtuale: Attiva (In-Memory)</div>
+                                <div>Stato Cloud: Connessione attiva</div>
+                                <div>Utente: ${nickname}</div>
+                            `;
+                        } else if (command === 'beep') {
+                            playClassicBeep(880, 250);
+                            termLog.innerHTML += `<div>Beep!</div>`;
+                        } else if (command === 'clear') {
+                            termLog.innerHTML = '<div>Console di Sistema kOS ripulita.</div>';
+                        } else if (command === 'cat' && parts[1]) {
+                            const path = parts[1].split('/');
+                            if (path.length === 2 && window.fileSystem[path[0]] && window.fileSystem[path[0]][path[1]]) {
+                                termLog.innerHTML += `<div class="text-white">${window.fileSystem[path[0]][path[1]]}</div>`;
+                            } else {
+                                termLog.innerHTML += `<div class="text-red-500">Errore: File o cartella non trovata. Uso corretto: cat Documenti/benvenuto.txt</div>`;
+                            }
+                        } else {
+                            termLog.innerHTML += `<div class="text-red-400">Comando non riconosciuto: '${cmd}'</div>`;
+                        }
+
+                        termLog.scrollTop = termLog.scrollHeight;
+                    }
+                };
+            }
+
+            else if (appType === 'kPhotos') {
+                // Leggi immagini dinamiche incluse quelle caricate
+                const imgKeys = Object.keys(window.fileSystem.Immagini);
+                let imgGridHTML = '';
+                
+                imgKeys.forEach(name => {
+                    const src = window.fileSystem.Immagini[name];
+                    imgGridHTML += `
+                        <div class="border p-1 bg-white cursor-pointer hover:border-blue-500 relative group" onclick="viewPhoto('${name}', '${src}')">
+                            <img src="${src}" class="w-full h-16 object-cover" alt="${name}">
+                            <div class="text-[10px] text-center mt-1 truncate font-bold text-zinc-700">${name}</div>
+                            <button class="absolute top-1 right-1 bg-blue-600 text-white text-[9px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" onclick="event.stopPropagation(); setAsWallpaper('${src}')">Sfondo</button>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-[#d4d0c8] text-zinc-900 text-xs">
+                        <div class="bg-white border-b p-2 font-bold flex justify-between items-center shrink-0">
+                            <span>Sfondi e Immagini caricate</span>
+                            <button onclick="window.triggerFileInput()" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-upload"></i> Carica Foto</button>
+                        </div>
+                        <div class="flex-1 grid grid-cols-3 gap-2 p-2 overflow-y-auto">
+                            ${imgGridHTML || '<div class="col-span-3 text-center text-zinc-500 italic py-8">Nessuna immagine caricata. Carica file .png o .jpg!</div>'}
+                        </div>
+                    </div>
+                `;
+
+                window.viewPhoto = (name, url) => {
+                    const imgModal = document.createElement('div');
+                    imgModal.className = "fixed inset-0 bg-black/80 flex flex-col justify-center items-center z-[100] cursor-pointer";
+                    imgModal.innerHTML = `
+                        <div class="text-white font-bold text-sm mb-2">${name}</div>
+                        <img src="${url}" class="max-w-[85vw] max-h-[80vh] object-contain border-4 border-white shadow-2xl">
+                        <div class="mt-4 flex gap-3 pointer-events-auto">
+                            <button class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded text-xs" onclick="event.stopPropagation(); setAsWallpaper('${url}'); imgModal.remove();">Imposta Sfondo Desktop</button>
+                            <button class="bg-zinc-600 text-white font-bold px-3 py-1.5 rounded text-xs" onclick="imgModal.remove()">Chiudi</button>
+                        </div>
+                    `;
+                    imgModal.onclick = () => imgModal.remove();
+                    document.body.appendChild(imgModal);
+                };
+
+                window.setAsWallpaper = (url) => {
+                    document.getElementById('bliss-wallpaper').firstElementChild.style.background = `url('${url}') center/cover no-repeat`;
+                    showNotification("Sfondo Desktop", "Nuovo sfondo impostato correttamente!");
+                };
+            }
+
+            else if (appType === 'kMusic') {
+                // Sezione Player Multimediale (Audio & Video)
+                const mediaKeys = Object.keys(window.fileSystem.Media);
+                let mediaListHTML = '';
+
+                mediaKeys.forEach(name => {
+                    const isVideo = name.endsWith('.mp4') || name.endsWith('.webm');
+                    const icon = isVideo ? 'fa-video text-rose-500' : 'fa-music text-blue-500';
+                    mediaListHTML += `
+                        <button class="w-full bg-white border p-2 text-left hover:bg-slate-100 flex items-center justify-between" onclick="playMediaFile('${name}')">
+                            <span><i class="fa-solid ${icon} mr-2"></i> ${name}</span>
+                            <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded uppercase font-semibold text-zinc-600">${isVideo ? 'Video' : 'Audio'}</span>
+                        </button>
+                    `;
+                });
+
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-[#d4d0c8] text-zinc-900 text-xs">
+                        <!-- Schermo di Riproduzione / Logo Player -->
+                        <div class="bg-zinc-900 text-green-400 p-3 font-mono flex flex-col shrink-0 relative min-h-[140px] items-center justify-center overflow-hidden border-b-4 border-zinc-700">
+                            <!-- Visualizer di default se non ci sono video -->
+                            <div id="media-visualizer-box" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-zinc-950 p-2 text-center">
+                                <i class="fa-solid fa-circle-play text-4xl animate-pulse text-blue-500 mb-1"></i>
+                                <div id="track-playing" class="text-xs text-blue-200 max-w-[90%] truncate">Nessun file multimediale in riproduzione</div>
+                                <div class="text-[10px] text-zinc-400 mt-0.5">Sintetizzatore o riproduzione reali</div>
+                            </div>
+                            <!-- Tag HTML5 per riproduzione reale audio e video -->
+                            <video id="kos-video-player" class="hidden w-full max-h-[140px] bg-black object-contain z-10" controls></video>
+                            <audio id="kos-audio-player" class="hidden"></audio>
+                        </div>
+                        
+                        <!-- Pulsanti di Controllo Media e Upload -->
+                        <div class="bg-[#d4d0c8] p-2 border-b border-zinc-400 flex justify-between items-center shrink-0">
+                            <span class="font-bold text-zinc-700">I Miei File Multimediali</span>
+                            <button onclick="window.triggerFileInput()" class="bg-violet-600 text-white font-bold px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-cloud-arrow-up"></i> Carica MP3/MP4</button>
+                        </div>
+
+                        <!-- Elenco Canzoni/Video -->
+                        <div class="flex-1 p-2 flex flex-col gap-1.5 overflow-y-auto" id="media-playlist">
+                            <div class="text-zinc-500 font-bold px-1 text-[10px]">MIDI SINTETIZZATI INTEGRATI:</div>
+                            <button class="bg-white border p-2 text-left hover:bg-slate-100 flex items-center justify-between" onclick="playSynthSymphony()">
+                                <span><i class="fa-solid fa-play text-violet-600 mr-2"></i> Sinfonia d'Apertura (Chords)</span>
+                                <span class="text-zinc-400">MIDI Synth</span>
+                            </button>
+                            <button class="bg-white border p-2 text-left hover:bg-slate-100 flex items-center justify-between" onclick="playSynthBeat()">
+                                <span><i class="fa-solid fa-play text-violet-600 mr-2"></i> Beat Elettronico XP</span>
+                                <span class="text-zinc-400">Oscillator</span>
+                            </button>
+                            
+                            <div class="text-zinc-500 font-bold px-1 text-[10px] mt-2">I TUOI FILE MULTIMEDIALI CARICATI:</div>
+                            ${mediaListHTML || '<div class="text-center text-zinc-500 italic py-4">Nessun brano o video caricato dal computer.<br>Carica i tuoi file .mp3 o .mp4!</div>'}
+                        </div>
+                    </div>
+                `;
+
+                // Logica di riproduzione multimediale reale
+                const trackPlaying = container.querySelector('#track-playing');
+                const videoPlayer = container.querySelector('#kos-video-player');
+                const audioPlayer = container.querySelector('#kos-audio-player');
+                const visualizerBox = container.querySelector('#media-visualizer-box');
+
+                window.playMediaFile = (name) => {
+                    const base64Data = window.fileSystem.Media[name];
+                    if (!base64Data) return;
+
+                    // Stop di eventuali altri player attivi
+                    audioPlayer.pause();
+                    videoPlayer.pause();
+
+                    const isVideo = name.endsWith('.mp4') || name.endsWith('.webm');
+
+                    if (isVideo) {
+                        visualizerBox.classList.add('hidden');
+                        videoPlayer.classList.remove('hidden');
+                        videoPlayer.src = base64Data;
+                        videoPlayer.play();
+                        trackPlaying.textContent = `In riproduzione Video: ${name}`;
+                    } else {
+                        videoPlayer.classList.add('hidden');
+                        visualizerBox.classList.remove('hidden');
+                        audioPlayer.src = base64Data;
+                        audioPlayer.play();
+                        trackPlaying.innerHTML = `<span class="animate-pulse text-green-400">🔊 In riproduzione Audio:</span> <br>${name}`;
+                    }
+                };
+
+                window.playSynthSymphony = () => {
+                    videoPlayer.classList.add('hidden');
+                    visualizerBox.classList.remove('hidden');
+                    audioPlayer.pause();
+                    videoPlayer.pause();
+                    trackPlaying.textContent = "Sinfonia d'Apertura (Synthesized)";
+                    playXpStartup();
+                };
+
+                window.playSynthBeat = () => {
+                    videoPlayer.classList.add('hidden');
+                    visualizerBox.classList.remove('hidden');
+                    audioPlayer.pause();
+                    videoPlayer.pause();
+                    trackPlaying.textContent = "Beat Elettronico XP (Synthesized)";
+                    const notes = [440, 554, 659, 880, 659, 554];
+                    notes.forEach((freq, idx) => {
+                        setTimeout(() => {
+                            playClassicBeep(freq, 200);
+                        }, idx * 250);
+                    });
+                };
+            }
+
+            else if (appType === 'kFiles') {
+                container.innerHTML = `
+                    <div class="flex flex-col h-full bg-white text-zinc-900 text-xs">
+                        <!-- Toolbar Esplora Risorse -->
+                        <div class="bg-[#d4d0c8] border-b p-2 flex justify-between items-center text-zinc-800 shrink-0">
+                            <div class="flex gap-2 items-center">
+                                <i class="fa-solid fa-folder-open text-yellow-500 text-lg"></i>
+                                <span class="font-bold text-sm">Esplora Risorse kOS</span>
+                            </div>
+                            <button onclick="window.triggerFileInput()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1 rounded text-xs flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>Importa File</span>
+                            </button>
+                        </div>
+                        <div class="flex flex-1 overflow-hidden">
+                            <!-- Sidebar Cartelle -->
+                            <div class="w-1/3 bg-slate-50 border-r p-2 flex flex-col gap-1 select-none">
+                                <div class="font-bold mb-1 text-zinc-500 text-[10px] uppercase">RISORSE DI ARCHIVIO</div>
+                                <button class="text-left py-1 px-1.5 bg-blue-100 rounded text-blue-800 font-semibold mb-1" onclick="switchFolder('Documenti')">
+                                    <i class="fa-solid fa-folder text-yellow-500 mr-1.5"></i> Documenti
+                                </button>
+                                <button class="text-left py-1 px-1.5 hover:bg-slate-200 rounded text-zinc-700 font-semibold mb-1" onclick="switchFolder('Immagini')">
+                                    <i class="fa-solid fa-images text-rose-400 mr-1.5"></i> Immagini
+                                </button>
+                                <button class="text-left py-1 px-1.5 hover:bg-slate-200 rounded text-zinc-700 font-semibold mb-1" onclick="switchFolder('Media')">
+                                    <i class="fa-solid fa-photo-film text-violet-500 mr-1.5"></i> Media & Musica
+                                </button>
+                            </div>
+                            <!-- Contenuto Cartella -->
+                            <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2">
+                                <div class="font-bold border-b pb-1 text-zinc-600" id="current-folder-title">Cartella: Documenti</div>
+                                <div class="grid grid-cols-2 gap-2" id="files-list">
+                                    <!-- Generati dinamicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const filesList = container.querySelector('#files-list');
+                const folderTitle = container.querySelector('#current-folder-title');
+                const sidebarButtons = container.querySelectorAll('.w-1/3 button');
+
+                window.switchFolder = (folderName) => {
+                    sidebarButtons.forEach(btn => {
+                        if (btn.textContent.includes(folderName)) {
+                            btn.className = "text-left py-1 px-1.5 bg-blue-100 rounded text-blue-800 font-semibold mb-1";
+                        } else {
+                            btn.className = "text-left py-1 px-1.5 hover:bg-slate-200 rounded text-zinc-700 font-semibold mb-1";
+                        }
+                    });
+
+                    folderTitle.textContent = `Cartella: ${folderName}`;
+                    renderExplorerFolder(folderName);
+                };
+
+                function renderExplorerFolder(folderName) {
+                    filesList.innerHTML = '';
+                    const folderContent = window.fileSystem[folderName] || {};
+                    const files = Object.keys(folderContent);
+
+                    if (files.length === 0) {
+                        filesList.innerHTML = `<div class="col-span-2 text-center text-zinc-400 italic py-8">Nessun file presente in questa cartella. Premi 'Importa File' per caricarne alcuni!</div>`;
+                        return;
+                    }
+
+                    files.forEach(f => {
+                        const card = document.createElement('div');
+                        card.className = "border p-2 bg-slate-50 rounded flex items-center gap-2 cursor-pointer hover:bg-blue-50 truncate";
+                        
+                        let icon = '<i class="fa-solid fa-file-lines text-slate-500 text-xl"></i>';
+                        if (folderName === 'Immagini') {
+                            icon = `<img src="${folderContent[f]}" class="w-6 h-6 object-cover rounded">`;
+                        } else if (folderName === 'Media') {
+                            const isVideo = f.endsWith('.mp4') || f.endsWith('.webm');
+                            icon = isVideo ? '<i class="fa-solid fa-video text-rose-500 text-xl"></i>' : '<i class="fa-solid fa-music text-blue-500 text-xl"></i>';
+                        }
+
+                        card.onclick = () => {
+                            if (folderName === 'Documenti') {
+                                openApp('kPad');
+                                setTimeout(() => {
+                                    const padInput = document.querySelector('#pad-text');
+                                    const nameInput = document.querySelector('#filename');
+                                    if (padInput && nameInput) {
+                                        padInput.value = folderContent[f];
+                                        nameInput.value = f;
+                                    }
+                                }, 100);
+                            } else if (folderName === 'Immagini') {
+                                openApp('kPhotos');
+                            } else if (folderName === 'Media') {
+                                openApp('kMusic');
+                                setTimeout(() => {
+                                    if (typeof window.playMediaFile === 'function') {
+                                        window.playMediaFile(f);
+                                    }
+                                }, 150);
+                            }
+                        };
+
+                        card.innerHTML = `${icon} <span class="truncate font-semibold text-zinc-700">${f}</span>`;
+                        filesList.appendChild(card);
+                    });
+                }
+
+                // Inizializza sulla cartella "Documenti"
+                switchFolder('Documenti');
+            }
+
+            else if (appType === 'minesweeper') {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center h-full bg-[#d4d0c8] p-3 text-zinc-900 select-none">
+                        <!-- Header Prato Fiorito -->
+                        <div class="flex justify-between items-center bg-zinc-300 border-2 border-inset p-1.5 w-full max-w-[240px] mb-3 text-xs font-mono font-bold">
+                            <span id="mine-count" class="text-red-600 bg-black px-1.5 py-0.5 text-sm">010</span>
+                            <button id="mine-reset" class="bg-yellow-300 border border-zinc-500 px-2 py-0.5 text-base">😊</button>
+                            <span id="mine-timer" class="text-red-600 bg-black px-1.5 py-0.5 text-sm">000</span>
+                        </div>
+                        <!-- Tabella di gioco -->
+                        <div id="mine-grid" class="grid grid-cols-9 gap-1 bg-zinc-400 p-1 border-2 border-inset max-w-[240px]"></div>
+                    </div>
+                `;
+
+                const gridContainer = container.querySelector('#mine-grid');
+                const resetBtn = container.querySelector('#mine-reset');
+                const mineCountEl = container.querySelector('#mine-count');
+                const timerEl = container.querySelector('#mine-timer');
+
+                let size = 9;
+                let mines = 10;
+                let grid = [];
+                let minePositions = [];
+                let gameActive = true;
+                let timer = 0;
+                let timerInterval = null;
+
+                function initMinesweeper() {
+                    gridContainer.innerHTML = '';
+                    grid = Array(size).fill(null).map(() => Array(size).fill(null).map(() => ({ mine: false, revealed: false, flagged: false, count: 0 })));
+                    minePositions = [];
+                    gameActive = true;
+                    clearInterval(timerInterval);
+                    timer = 0;
+                    timerEl.textContent = '000';
+                    mineCountEl.textContent = String(mines).padStart(3, '0');
+                    resetBtn.textContent = '😊';
+
+                    // Piazza mine randomicamente
+                    let placed = 0;
+                    while (placed < mines) {
+                        const r = Math.floor(Math.random() * size);
+                        const c = Math.floor(Math.random() * size);
+                        if (!grid[r][c].mine) {
+                            grid[r][c].mine = true;
+                            minePositions.push([r, c]);
+                            placed++;
+                        }
+                    }
+
+                    // Calcola vicini
+                    for (let r = 0; r < size; r++) {
+                        for (let c = 0; c < size; c++) {
+                            if (grid[r][c].mine) continue;
+                            let count = 0;
+                            for (let dr = -1; dr <= 1; dr++) {
+                                for (let dc = -1; dc <= 1; dc++) {
+                                    if (grid[r + dr]?.[c + dc]?.mine) count++;
+                                }
+                            }
+                            grid[r][c].count = count;
+                        }
+                    }
+
+                    // Renderizza i pulsanti delle celle
+                    for (let r = 0; r < size; r++) {
+                        for (let c = 0; c < size; c++) {
+                            const cellBtn = document.createElement('button');
+                            cellBtn.className = "w-6 h-6 bg-zinc-300 border-t-2 border-l-2 border-white border-r-2 border-b-2 border-zinc-600 font-bold flex items-center justify-center text-xs active:border-1";
+                            cellBtn.dataset.r = r;
+                            cellBtn.dataset.c = c;
+
+                            cellBtn.onclick = () => revealCell(r, c);
+                            cellBtn.oncontextmenu = (e) => {
+                                e.preventDefault();
+                                toggleFlag(r, c);
+                            };
+
+                            gridContainer.appendChild(cellBtn);
+                        }
+                    }
+
+                    // Inizia timer
+                    timerInterval = setInterval(() => {
+                        timer++;
+                        timerEl.textContent = String(timer).padStart(3, '0');
+                    }, 1000);
+                }
+
+                function revealCell(r, c) {
+                    if (!gameActive || grid[r][c].revealed || grid[r][c].flagged) return;
+
+                    grid[r][c].revealed = true;
+                    const btn = gridContainer.children[r * size + c];
+                    btn.className = "w-6 h-6 bg-zinc-200 border border-zinc-400 font-bold flex items-center justify-center text-xs";
+
+                    if (grid[r][c].mine) {
+                        // Esplosione! Gioco perso.
+                        gameActive = false;
+                        clearInterval(timerInterval);
+                        resetBtn.textContent = '😵';
+                        revealAllMines();
+                        playClassicBeep(150, 400);
+                        return;
+                    }
+
+                    if (grid[r][c].count > 0) {
+                        btn.textContent = grid[r][c].count;
+                        // Colori dei numeri storici di Windows
+                        const colors = ['text-blue-600', 'text-green-700', 'text-red-600', 'text-indigo-900', 'text-red-900'];
+                        btn.classList.add(colors[grid[r][c].count - 1] || 'text-black');
+                    } else {
+                        // Cascata ricorsiva se zero mine vicine
+                        for (let dr = -1; dr <= 1; dr++) {
+                            for (let dc = -1; dc <= 1; dc++) {
+                                if (grid[r + dr]?.[c + dc]) revealCell(r + dr, c + dc);
+                            }
+                        }
+                    }
+
+                    checkWin();
+                }
+
+                function toggleFlag(r, c) {
+                    if (!gameActive || grid[r][c].revealed) return;
+                    grid[r][c].flagged = !grid[r][c].flagged;
+                    const btn = gridContainer.children[r * size + c];
+                    btn.innerHTML = grid[r][c].flagged ? '<i class="fa-solid fa-flag text-red-600"></i>' : '';
+                }
+
+                function revealAllMines() {
+                    minePositions.forEach(([r, c]) => {
+                        const btn = gridContainer.children[r * size + c];
+                        btn.className = "w-6 h-6 bg-red-400 border border-zinc-400 flex items-center justify-center text-xs";
+                        btn.innerHTML = '<i class="fa-solid fa-bomb text-zinc-900"></i>';
+                    });
+                }
+
+                function checkWin() {
+                    let win = true;
+                    for (let r = 0; r < size; r++) {
+                        for (let c = 0; c < size; c++) {
+                            if (!grid[r][c].mine && !grid[r][c].revealed) win = false;
+                        }
+                    }
+                    if (win) {
+                        gameActive = false;
+                        clearInterval(timerInterval);
+                        resetBtn.textContent = '😎';
+                        showNotification("Prato Fiorito", "Hai vinto! Ottimo lavoro, genio delle mine.");
+                        playClassicBeep(880, 500);
+                    }
+                }
+
+                resetBtn.onclick = initMinesweeper;
+                initMinesweeper();
+            }
+        }
+
+        // BROWSER GEMINI NAVIGATOR (KExplorer Proxy AI)
+        async function fetchGeminiBrowsing(queryText) {
+            const apiKey = ""; // Gestito automaticamente a runtime
+            const systemPrompt = "Sei KExplorer, un browser ultra-veloce degli anni 2000. Traduci la ricerca o l'URL richiesto in una bellissima, completa e dettagliata pagina web interattiva, formattata in perfetto HTML. Mostra dati reali ed informazioni storiche/attuali formattandole piacevolmente. Usa elementi simulati in HTML con Tailwind. NON includere meta tag e non restituire testo grezzo al di fuori di un contenitore HTML pulito.";
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Simula e renderizza il sito o la ricerca per: "${queryText}"` }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        tools: [{ "google_search": {} }] // Forniamo grounding di Google Search reale!
+                    })
+                });
+
+                const result = await response.json();
+                let text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Errore nel caricamento del sito.";
+                
+                // Pulizia blocco codice markdown se presente
+                if (text.includes("```html")) {
+                    text = text.split("```html")[1].split("```")[0];
+                } else if (text.includes("```")) {
+                    text = text.split("```")[1].split("```")[0];
+                }
+                return text;
+            } catch (err) {
+                return `<div class="p-4 text-red-500">Impossibile contattare il server KExplorer. Assicurati che le chiavi API siano attive. Errore: ${err.message}</div>`;
+            }
+        }
+
+        // GESTORE CHAT FIRESTORE IN TEMPO REALE
+        function setupChatListener() {
+            if (!db) return;
+            const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'messages');
+
+            onSnapshot(collectionRef, (snapshot) => {
+                const messages = [];
+                snapshot.forEach(doc => messages.push(doc.data()));
+                
+                // Ordina per timestamp
+                messages.sort((a, b) => a.timestamp - b.timestamp);
+
+                if (window.chatMessagesEl) {
+                    window.chatMessagesEl.innerHTML = '';
+                    messages.forEach(msg => {
+                        // Filtro per destinatario (Tutti o me stesso come destinatario/mittente)
+                        if (msg.recipient === "Tutti" || msg.recipient === nickname || msg.sender === nickname) {
+                            renderLocalMessage(msg);
+                        }
+                    });
+                    window.chatMessagesEl.scrollTop = window.chatMessagesEl.scrollHeight;
+                }
+            }, (err) => {
+                console.warn("Impossibile caricare messaggi da Firestore:", err);
+            });
+        }
+
+        function renderLocalMessage(msg) {
+            if (!window.chatMessagesEl) return;
+            const msgEl = document.createElement('div');
+            const isMe = msg.sender === nickname;
+            const isPrivate = msg.recipient !== "Tutti";
+
+            msgEl.className = `p-1 px-2 rounded max-w-[80%] text-xs ${isMe ? 'bg-blue-100 self-end ml-auto' : 'bg-slate-200 self-start'} ${isPrivate ? 'border-l-4 border-yellow-500' : ''}`;
+            
+            const labelDest = isPrivate ? ` <span class="text-yellow-600 font-bold">(Privato a ${msg.recipient})</span>` : '';
+            msgEl.innerHTML = `
+                <div class="font-bold text-[10px] text-zinc-500">${msg.sender}${labelDest}</div>
+                <div>${msg.text}</div>
+            `;
+            window.chatMessagesEl.appendChild(msgEl);
+            window.chatMessagesEl.scrollTop = window.chatMessagesEl.scrollHeight;
+        }
+
+        // CHAT BOT DI INTELLIGENZA ARTIFICIALE (Per simulare risposte se l'utente è solo)
+        async function triggerBotResponse(userText, recipient, containerEl) {
+            if (recipient !== "Tutti" && recipient !== "kOS" && recipient !== "Assistente") return;
+
+            setTimeout(async () => {
+                const botTyping = document.createElement('div');
+                botTyping.className = "text-zinc-400 italic text-xs";
+                botTyping.id = "bot-typing";
+                botTyping.textContent = "kOS sta scrivendo...";
+                containerEl.appendChild(botTyping);
+                containerEl.scrollTop = containerEl.scrollHeight;
+
+                const apiKey = "";
+                const systemPrompt = "Sei l'Assistente virtuale integrato nel sistema operativo fittizio kOS. Rispondi con tono simpatico, entusiasta, nostalgico dell'era tecnologica di Windows XP. Sii conciso e amichevole.";
+                
+                let reply = "Ciao! Sto risistemando i circuiti. KExplorer è incredibile vero?";
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: userText }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] }
+                        })
+                    });
+                    const result = await response.json();
+                    reply = result.candidates?.[0]?.content?.parts?.[0]?.text || reply;
+                } catch (e) {}
+
+                botTyping.remove();
+
+                const botMsg = {
+                    sender: recipient === "Tutti" ? "Saggio_kOS" : recipient,
+                    recipient: nickname,
+                    text: reply,
+                    timestamp: Date.now()
+                };
+
+                if (db) {
+                    try {
+                        const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'messages');
+                        await addDoc(collectionRef, botMsg);
+                    } catch (e) {
+                        renderLocalMessage(botMsg);
+                    }
+                } else {
+                    renderLocalMessage(botMsg);
+                }
+            }, 1500);
+        }
+
+        // UTILITY DI PERSONALIZZAZIONE (SFONDO / UTENTE)
+        window.changeWallpaperDialog = function() {
+            const url = prompt("Inserisci l'URL di un'immagine online per lo sfondo del desktop:", "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1600");
+            if (url) {
+                document.getElementById('bliss-wallpaper').firstElementChild.style.background = `url('${url}') center/cover no-repeat`;
+                showNotification("Sfondo Desktop", "Nuovo sfondo impostato correttamente!");
+            }
+        }
+
+        window.setNicknameDialog = function() {
+            const nick = prompt("Scegli il tuo nuovo Nickname per kOS Cloud Chat:", nickname);
+            if (nick) {
+                nickname = nick;
+                document.getElementById('username-display').innerText = nick;
+                showNotification("Profilo di Sistema", `Il tuo nickname è stato impostato su: ${nick}`);
+            }
+        }
+
+        // NOTIFICHE MODALI CUSTOM (NO ALERTS BLOCCHI IFRAME)
+        window.showNotification = function(title, msg) {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-message').textContent = msg;
+            document.getElementById('custom-alert').classList.remove('hidden');
+            playClassicBeep(600, 150);
+        }
+
+        window.closeAlert = function() {
+            document.getElementById('custom-alert').classList.add('hidden');
+        }
+
+        window.triggerShutdown = function() {
+            document.body.innerHTML = `
+                <div class="w-screen h-screen bg-black flex flex-col items-center justify-center text-zinc-600 font-mono text-center">
+                    <div class="text-red-600 text-3xl mb-4"><i class="fa-solid fa-power-off"></i></div>
+                    <div class="text-lg font-bold">Ora è possibile spegnere il computer in sicurezza.</div>
+                    <button onclick="location.reload()" class="mt-6 border border-zinc-700 px-4 py-2 hover:bg-zinc-900 rounded text-sm text-zinc-400">Riavvia kOS</button>
+                </div>
+            `;
+            playClassicBeep(220, 500);
+        }
+    </script>
+</body>
+</html>
