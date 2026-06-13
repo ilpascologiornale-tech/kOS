@@ -1,5 +1,5 @@
 {
-  "name": "kos-desktop",
+  "name": "kOS-XP",
   "version": "1.0.0",
   "description": "kOS - Retro Web Operating System Desktop App",
   "main": "main.js",
@@ -9,7 +9,7 @@
   },
   "keywords": [
     "kOS",
-    "retro",
+    "XP",
     "operating-system",
     "electron"
   ],
