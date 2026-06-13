@@ -25,15 +25,15 @@
     "files": [
       "kOS.html",
       "main.js",
-      "kOS.ico"
+      "kOS.png"
     ],
     "win": {
       "target": "portable",
-      "icon": "kOS.ico"
+      "icon": "kOS.png"
     },
     "mac": {
       "target": "dmg",
-      "icon": "kOS.ico"
+      "icon": "kOS.png"
     },
     "linux": {
       "target": "AppImage",
