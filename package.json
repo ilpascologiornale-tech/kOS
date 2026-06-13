@@ -1,0 +1,43 @@
+{
+  "name": "kos-desktop",
+  "version": "1.0.0",
+  "description": "kOS - Retro Web Operating System Desktop App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "kOS",
+    "retro",
+    "operating-system",
+    "electron"
+  ],
+  "author": "kOS Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.kos.retro-os",
+    "productName": "kOS",
+    "files": [
+      "kOS.html",
+      "main.js",
+      "kOS.ico"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "kOS.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "kOS.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Utility"
+    }
+  }
+}
